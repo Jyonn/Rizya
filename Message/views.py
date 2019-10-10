@@ -1,4 +1,3 @@
-from SmartDjango import Packing
 from django.views import View
 
 from Message.models import Message
@@ -7,8 +6,7 @@ from Message.models import Message
 class BaseView(View):
     """ /api/message """
     @staticmethod
-    @Packing.http_pack
-    def get(r):
+    def get(_):
         messages = Message.objects.filter(read=False)
         messages_ = messages.dict(Message.d)
         for message in messages:

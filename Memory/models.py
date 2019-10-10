@@ -1,12 +1,12 @@
 import datetime
 
-from SmartDjango import SmartModel, Packing, ErrorCenter, E, Param
-from django.db import models
+from SmartDjango import models, Excp, E, P
 
 from Trigger.models import TriggerHub, Trigger
 
 
-class MemoryE(ErrorCenter):
+@E.register
+class MemoryE:
     INVALID_DATE = E("不能是未来的日期", hc=403)
     EVENT_NOT_FOUND = E("找不到事件", hc=404)
     CREATE_EVENT = E("添加事件失败", hc=500)
@@ -14,31 +14,24 @@ class MemoryE(ErrorCenter):
     CREATE_MEMORY = E("添加纪念日失败", hc=500)
 
 
-MemoryE.register()
-
-
-class Event(SmartModel):
-    MAX_L = {
-        'name': 20,
-    }
-
+class Event(models.Model):
     name = models.CharField(
         verbose_name='事件名称',
-        max_length=MAX_L['name'],
+        max_length=20,
     )
 
     """
     增删方法
     """
     @classmethod
-    @Packing.pack
+    @Excp.pack
     def create(cls, name):
         try:
             event = cls(
                 name=name,
             )
             event.save()
-        except Exception as err:
+        except Exception:
             return MemoryE.CREATE_EVENT
         return event
 
@@ -62,16 +55,16 @@ class Event(SmartModel):
     查询方法
     """
     @classmethod
-    @Packing.pack
+    @Excp.pack
     def get_by_pk(cls, pk):
         try:
             event = cls.objects.get(pk=pk)
-        except cls.DoesNotExist as err:
+        except cls.DoesNotExist:
             return MemoryE.EVENT_NOT_FOUND
         return event
 
 
-class Memory(SmartModel):
+class Memory(models.Model):
     event = models.ForeignKey(
         'Memory.Event',
         verbose_name='纪念事件',
@@ -97,7 +90,7 @@ class Memory(SmartModel):
     校验方法
     """
     @staticmethod
-    @Packing.pack
+    @Excp.pack
     def _valid_date(date: datetime.date):
         crt_date = datetime.date.today()
         if date > crt_date:
@@ -108,7 +101,7 @@ class Memory(SmartModel):
     """
 
     @classmethod
-    @Packing.pack
+    @Excp.pack
     def create(cls, event: Event, date: datetime.date, text: str, trigger_hub: TriggerHub):
         try:
             memory = cls(
@@ -118,7 +111,7 @@ class Memory(SmartModel):
                 trigger_hub=trigger_hub,
             )
             memory.save()
-        except Exception as err:
+        except Exception:
             return MemoryE.CREATE_MEMORY
         return memory
 
@@ -137,11 +130,11 @@ class Memory(SmartModel):
     """
 
     @classmethod
-    @Packing.pack
+    @Excp.pack
     def get_by_pk(cls, pk):
         try:
             memory = cls.objects.get(pk=pk)
-        except cls.DoesNotExist as err:
+        except cls.DoesNotExist:
             return MemoryE.MEMORY_NOT_FOUND
         return memory
 
@@ -149,11 +142,13 @@ class Memory(SmartModel):
         crt_date = datetime.date.today()
 
         for trigger in self.trigger_hub.triggers.all():
-            ret = trigger.fit(crt_date, self.date)
-            if ret.ok:
+            try:
+                data = trigger.fit(crt_date, self.date)
                 from Message.models import Message
-                Message.create(self, Param.Classify(ret.body))
+                Message.create(self, P.Classify(data))
                 break
+            except Exception:
+                pass
 
     """
     字典方法
@@ -167,20 +162,20 @@ class Memory(SmartModel):
         return (crt_date - self.date).days + 1
 
     def d(self):
-        return self.dictor(['id', 'date', 'text', 'trigger_hub'])
+        return self.dictor('id', 'date', 'text', 'trigger_hub')
 
     def d_msg(self):
-        return self.dictor(['date', 'text'])
+        return self.dictor('date', 'text')
 
     def d_list(self):
-        return self.dictor(['id', 'date', 'text'])
+        return self.dictor('id', 'date', 'text')
 
 
 class MemoryP:
-    E_NAME, = Event.P(['name'])
-    EVENT = Param('event_id', '事件ID', 'event').process(Event.get_by_pk)
+    e_name, = Event.P('name')
+    event = P('event_id', '事件ID', 'event').process(Event.get_by_pk)
 
-    TEXT, DATE = Memory.P(['text', 'date'])
-    DATE.process(lambda d: datetime.datetime.strptime(d, '%Y-%m-%d').date(), begin=True)
+    text, date = Memory.P('text', 'date')
+    date.process(lambda d: datetime.datetime.strptime(d, '%Y-%m-%d').date(), begin=True)
 
-    MEMORY = Param('memory_id', '纪念ID', 'memory').process(Memory.get_by_pk)
+    memory = P('memory_id', '纪念ID', 'memory').process(Memory.get_by_pk)

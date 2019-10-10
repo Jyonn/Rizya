@@ -1,10 +1,10 @@
 import datetime
 
-from SmartDjango import SmartModel, Packing, ErrorCenter, E, Param
-from django.db import models
+from SmartDjango import models, Excp, E, P
 
 
-class TriggerE(ErrorCenter):
+@E.register
+class TriggerE:
     TRIGGER_HUB_NOT_FOUND = E("找不到触发库", hc=404)
     TRIGGER_NOT_FOUND = E("找不到触发器", hc=404)
     UNFIT = E("没有触发", hc=200)
@@ -13,17 +13,10 @@ class TriggerE(ErrorCenter):
     CREATE_TRIGGER_HUB = E("新建触发库失败", hc=500)
 
 
-TriggerE.register()
-
-
-class Trigger(SmartModel):
+class Trigger(models.Model):
     """
     触发器类，用于判别距离日期的特殊意义
     """
-    MAX_L = {
-        'name': 20,
-    }
-
     TTYPE_SOLID = 0
     TTYPE_TIMES = 1
     TTYPE_YEARS = 2
@@ -35,7 +28,7 @@ class Trigger(SmartModel):
 
     name = models.CharField(
         verbose_name='触发名称',
-        max_length=MAX_L['name'],
+        max_length=20,
     )
 
     ttype = models.PositiveSmallIntegerField(
@@ -45,22 +38,14 @@ class Trigger(SmartModel):
 
     days = models.PositiveIntegerField(
         verbose_name='天数',
+        min_value=1,
     )
-
-    """
-    字段校验方法
-    """
-    @staticmethod
-    @Packing.pack
-    def _valid_days(days):
-        if days <= 0:
-            return TriggerE.INVALID_DAYS
 
     """
     增删方法
     """
     @classmethod
-    @Packing.pack
+    @Excp.pack
     def create(cls, name, ttype, days):
         try:
             trigger = cls(
@@ -68,7 +53,8 @@ class Trigger(SmartModel):
                 ttype=ttype,
                 days=days,
             )
-        except Exception as err:
+            trigger.save()
+        except Exception:
             return TriggerE.CREATE_TRIGGER
         return trigger
 
@@ -89,12 +75,12 @@ class Trigger(SmartModel):
         return self.pk
 
     def d(self):
-        return self.dictor(['name', 'ttype', 'days', 'id'])
+        return self.dictor('name', 'ttype', 'days', 'id')
 
     """
     查询方法
     """
-    @Packing.pack
+    @Excp.pack
     def fit(self, crt_date: datetime.date, m_date: datetime.date):
         days = (crt_date - m_date).days + 1
 
@@ -105,21 +91,22 @@ class Trigger(SmartModel):
             if days % self.days == 0:
                 return dict(ttype=self.ttype, days=days, times=days / self.days)
         elif self.ttype == self.TTYPE_YEARS:
-            if crt_date.month == m_date.month and crt_date.day == m_date.day and crt_date.year != m_date.year:
+            if crt_date.month == m_date.month and \
+                    crt_date.day == m_date.day and crt_date.year != m_date.year:
                 return dict(ttype=self.ttype, years=crt_date.year - m_date.year)
         return TriggerE.UNFIT
 
     @classmethod
-    @Packing.pack
+    @Excp.pack
     def get_by_pk(cls, pk):
         try:
             trigger = cls.objects.get(pk=pk)
-        except cls.DoesNotExist as err:
+        except cls.DoesNotExist:
             return TriggerE.TRIGGER_NOT_FOUND
         return trigger
 
 
-class TriggerHub(SmartModel):
+class TriggerHub(models.Model):
     MAX_L = {
         'name': 20,
     }
@@ -150,7 +137,7 @@ class TriggerHub(SmartModel):
     """
 
     @classmethod
-    @Packing.pack
+    @Excp.pack
     def create(cls, name, triggers):
         try:
             hub = cls(
@@ -158,7 +145,7 @@ class TriggerHub(SmartModel):
             )
             hub.save()
             hub.update_triggers(triggers)
-        except Exception as err:
+        except Exception:
             return TriggerE.CREATE_TRIGGER_HUB
         return hub
 
@@ -181,25 +168,25 @@ class TriggerHub(SmartModel):
         return self.pk
 
     def d(self):
-        return self.dictor(['name', 'triggers', 'id'])
+        return self.dictor('name', 'triggers', 'id')
 
     """
     查询方法
     """
     @classmethod
-    @Packing.pack
+    @Excp.pack
     def get_by_pk(cls, pk):
         try:
             trigger_hub = cls.objects.get(pk=pk)
-        except cls.DoesNotExist as err:
+        except cls.DoesNotExist:
             return TriggerE.TRIGGER_HUB_NOT_FOUND
         return trigger_hub
 
 
 class TriggerP:
-    T_NAME, TTYPE, DAYS = Trigger.P(['name', 'ttype', 'days'])
-    TH_NAME, TRIGGERS = TriggerHub.P(['name', 'triggers'])
-    TRIGGERS.process(lambda pks: Trigger.objects.filter(pk__in=pks))
+    t_name, ttype, days = Trigger.P('name', 'ttype', 'days')
+    th_name, = TriggerHub.P('name')
+    triggers = P('triggers', '触发器列表').process(lambda pks: Trigger.objects.filter(pk__in=pks))
 
-    TRIGGER = Param('trigger_id', '触发器ID', 'trigger').process(Trigger.get_by_pk)
-    TRIGGER_HUB = Param('trigger_hub_id', '触发库ID', 'trigger_hub').process(TriggerHub.get_by_pk)
+    trigger = P('trigger_id', '触发器ID', 'trigger').process(Trigger.get_by_pk)
+    trigger_hub = P('trigger_hub_id', '触发库ID', 'trigger_hub').process(TriggerHub.get_by_pk)

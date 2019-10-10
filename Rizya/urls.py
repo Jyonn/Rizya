@@ -16,5 +16,5 @@ Including another URLconf
 from django.urls import path, include
 
 urlpatterns = [
-    path('api', include('Rizya.api_urls')),
+    path('v1', include('Rizya.api_urls')),
 ]

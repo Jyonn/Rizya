@@ -1,20 +1,17 @@
 import datetime
 
-from SmartDjango import SmartModel, Packing, ErrorCenter, E, Param
-from django.db import models
+from SmartDjango import models, Excp, E, Param
 
 from Memory.models import Memory
 from Trigger.models import Trigger
 
 
-class MessageE(ErrorCenter):
+@E.register
+class MessageE:
     CREATE_MESSAGE = E("新建消息失败", hc=500)
 
 
-MessageE.register()
-
-
-class Message(SmartModel):
+class Message(models.Model):
     memory = models.ForeignKey(
         'Memory.Memory',
         on_delete=models.CASCADE,
@@ -58,7 +55,7 @@ class Message(SmartModel):
     """
 
     @classmethod
-    @Packing.pack
+    @Excp.pack
     def create(cls, memory: Memory, data: Param.Classify):
         crt_date = datetime.date.today()
 
@@ -70,7 +67,7 @@ class Message(SmartModel):
                 **data.dict(),
             )
             message.save()
-        except Exception as err:
+        except Exception:
             return MessageE.CREATE_MESSAGE
         return message
 
@@ -84,7 +81,7 @@ class Message(SmartModel):
         return self.create_date.strftime('%Y-%m-%d')
 
     def d(self):
-        return self.dictor(['memory', 'ttype', 'days', 'times', 'years', 'create_date', 'read'])
+        return self.dictor('memory', 'ttype', 'days', 'times', 'years', 'create_date', 'read')
 
     """
     修改方法

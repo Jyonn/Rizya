@@ -25,7 +25,7 @@ SECRET_KEY = '%ucx!#@3bv!lyr$_v2-2w6@_p*)h6yv!#!jkd^eul-5cezxm##'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['rizya.6-79.cn', 'localhost']
+ALLOWED_HOSTS = ['.rizya.6-79.cn', 'localhost', '.local.6-79.cn']
 
 
 # Application definition
@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'SmartDjango.middleware.HttpPackMiddleware',
 ]
 
 # 增加跨域
