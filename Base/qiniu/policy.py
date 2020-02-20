@@ -34,4 +34,6 @@ class Policy:
             callbackBody=json.dumps(kwargs, ensure_ascii=False)
         )
         policy.update(IMAGE_POLICY)
+        print('policy')
+        print(policy)
         return policy
