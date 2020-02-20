@@ -38,12 +38,12 @@ class Album(Resource):
         default=True,
     )
 
-    # cover = models.ForeignKey(
-    #     'Image.Image',
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     related_name='cover',
-    # )
+    cover = models.ForeignKey(
+        'Image.Image',
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='cover',
+    )
 
     def born(self, name) -> 'Album':
         try:
