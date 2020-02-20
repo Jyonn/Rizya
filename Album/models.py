@@ -62,9 +62,6 @@ class Album(Resource):
         self.cover = image
         self.save()
 
-    def _readable_create_time(self):
-        return self.create_time.timestamp()
-
     def d(self):
         return self.dictor(
             'name', 'grid_rows', 'auto_arrange', 'cover', 'res_id->album_id',

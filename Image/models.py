@@ -75,6 +75,10 @@ class Resource(models.Model):
     def _readable_grid_position(self):
         return self.get_grid_position()
 
+    def _readable_create_time(self):
+        return self.create_time.timestamp()
+
+
 
 @E.register(id_processor=error_add_class_prefix)
 class ImageError:
