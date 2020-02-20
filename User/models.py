@@ -82,7 +82,7 @@ class User(models.Model):
     @classmethod
     def is_user_id_unique(cls, user_id: str):
         try:
-            cls.objects.get(user_id__iexist=user_id.lower())
+            cls.objects.get(user_id__iexact=user_id.lower())
         except cls.DoesNotExist:
             return True
         return False

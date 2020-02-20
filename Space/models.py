@@ -66,7 +66,7 @@ class Space(models.Model):
     @classmethod
     def is_name_unique(cls, name: str):
         try:
-            cls.objects.get(name__iexist=name.lower())
+            cls.objects.get(name__iexact=name.lower())
         except cls.DoesNotExist:
             return True
         return False
@@ -74,7 +74,7 @@ class Space(models.Model):
     @classmethod
     def get(cls, name: str):
         try:
-            return cls.objects.get(name__iexist=name.lower())
+            return cls.objects.get(name__iexact=name.lower())
         except cls.DoesNotExist:
             raise SpaceError.NOT_FOUND
 
