@@ -87,7 +87,6 @@ class Space(models.Model):
             with transaction.atomic():
                 space = cls.objects.create(
                     name=name,
-                    lower_name=name.lower(),
                     rename_card=0,
                     access=access,
                 )
