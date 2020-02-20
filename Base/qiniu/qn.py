@@ -10,12 +10,16 @@ from qiniu import urlsafe_base64_encode
 
 from Config.models import Config, CI
 
-ACCESS_KEY = Config.get_value_by_key(CI.QINIU_ACCESS_KEY, '')
-SECRET_KEY = Config.get_value_by_key(CI.QINIU_SECRET_KEY, '')
+ACCESS_KEY = Config.get_value_by_key(CI.QINIU_ACCESS_KEY)
+SECRET_KEY = Config.get_value_by_key(CI.QINIU_SECRET_KEY)
 RES_BUCKET = Config.get_value_by_key(CI.RES_BUCKET)
 RES_CDN_HOST = Config.get_value_by_key(CI.RES_CDN_HOST)
 
-_AUTH = qiniu.Auth(access_key=ACCESS_KEY, secret_key=SECRET_KEY)
+try:
+    _AUTH = qiniu.Auth(access_key=ACCESS_KEY, secret_key=SECRET_KEY)
+except Exception:
+    _AUTH = ''
+
 _KEY_PREFIX = 'rizya/'
 
 QINIU_MANAGE_HOST = "https://rs.qiniu.com"
