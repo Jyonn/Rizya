@@ -1,4 +1,5 @@
 from SmartDjango import Analyse
+from django.http import HttpRequest
 from django.views import View
 from smartify import P
 
@@ -9,6 +10,11 @@ from Image.models import ImageUploadAction
 
 class QiniuImageView(View):
     """/base/3-party/qiniu/image"""
+
+    @staticmethod
+    def get(r: HttpRequest):
+        print(r.GET.dict())
+        print(r.body)
 
     @staticmethod
     @Analyse.r(b=[
