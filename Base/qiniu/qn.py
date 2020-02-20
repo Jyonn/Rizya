@@ -10,8 +10,8 @@ from qiniu import urlsafe_base64_encode
 
 from Config.models import Config, CI
 
-ACCESS_KEY = Config.get_value_by_key(CI.QINIU_ACCESS_KEY)
-SECRET_KEY = Config.get_value_by_key(CI.QINIU_SECRET_KEY)
+ACCESS_KEY = Config.get_value_by_key(CI.QINIU_ACCESS_KEY, '')
+SECRET_KEY = Config.get_value_by_key(CI.QINIU_SECRET_KEY, '')
 RES_BUCKET = Config.get_value_by_key(CI.RES_BUCKET)
 RES_CDN_HOST = Config.get_value_by_key(CI.RES_CDN_HOST)
 
