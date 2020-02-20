@@ -189,11 +189,11 @@ class SpaceMan(models.Model):
         on_delete=models.CASCADE,
     )
 
-    avatar = models.ForeignKey(
-        'Image.Image',
-        on_delete=models.SET_NULL,
-        null=True,
-    )
+    # avatar = models.ForeignKey(
+    #     'Image.Image',
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    # )
 
     name = models.CharField(
         verbose_name='名字',
