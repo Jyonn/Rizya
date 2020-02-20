@@ -63,7 +63,7 @@ class Album(Resource):
         self.save()
 
     def _readable_create_time(self):
-        return self.create_time.timestamp
+        return self.create_time.timestamp()
 
     def d(self):
         return self.dictor(
