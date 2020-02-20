@@ -12,11 +12,6 @@ class QiniuImageView(View):
     """/base/3-party/qiniu/image"""
 
     @staticmethod
-    def get(r: HttpRequest):
-        print(r.GET.dict())
-        print(r.body)
-
-    @staticmethod
     @Analyse.r(b=[
         'key', 'action', 'mime_type', 'color_average', 'image_info',
         AlbumP.id_getter.clone().default()])
