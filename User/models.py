@@ -98,7 +98,7 @@ class User(models.Model):
             return user
         except E as e:
             try:
-                user = cls.objects.create(
+                return cls.objects.create(
                     user_id=qt_user_app_id,
                     rename_card=1,
                     qt_user_app_id=qt_user_app_id,
