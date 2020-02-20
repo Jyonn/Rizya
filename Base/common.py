@@ -1,4 +1,5 @@
 import datetime
+from typing import Union
 
 from QitianSDK import QitianManager
 from SmartDjango import NetPacker
@@ -12,6 +13,7 @@ QITIAN_APP_SECRET = Config.get_value_by_key(CI.QITIAN_APP_SECRET)
 
 SECRET_KEY = Config.get_value_by_key(CI.PROJECT_SECRET_KEY)
 JWT_ENCODE_ALGO = Config.get_value_by_key(CI.JWT_ENCODE_ALGO)
+HOST = Config.get_value_by_key(CI.HOST)
 
 qt_manager = QitianManager(QITIAN_APP_ID, QITIAN_APP_SECRET)
 
@@ -35,3 +37,14 @@ def last_timer(last):
         return datetime.datetime.now()
     else:
         return datetime.datetime.fromtimestamp(last)
+
+
+def boundary(max_=None, min_=None):
+    def processor(value):
+        value = int(value)
+        if max_ is not None and value > max_:
+            value = max_
+        if min_ is not None and value < min_:
+            value = min_
+        return value
+    return processor

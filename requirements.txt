@@ -1,3 +1,6 @@
-QitianSDK
+qiniu
+requests
+QitianSDK>=0.0.8
 django
-SmartDjango>=2.0.6b1
+SmartDjango==3.6.3a0
+smartify==0.0.2a5

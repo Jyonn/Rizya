@@ -1,25 +1,22 @@
 from SmartDjango import models, E, Hc
 
+from Base.error import error_add_class_prefix
 
-@E.register()
+
+@E.register(id_processor=error_add_class_prefix)
 class ConfigError:
-    CREATE_CONFIG = E("更新配置错误", hc=Hc.InternalServerError)
-    CONFIG_NOT_FOUND = E("不存在的配置", hc=Hc.NotFound)
+    CREATE = E("更新配置错误", hc=Hc.InternalServerError)
+    NOT_FOUND = E("不存在的配置", hc=Hc.NotFound)
 
 
 class Config(models.Model):
-    MAX_L = {
-        'key': 100,
-        'value': 255,
-    }
-
     key = models.CharField(
-        max_length=MAX_L['key'],
+        max_length=100,
         unique=True,
     )
 
     value = models.CharField(
-        max_length=MAX_L['value'],
+        max_length=255,
     )
 
     @classmethod
@@ -69,6 +66,11 @@ class ConfigInstance:
     HOST = 'host'
     QITIAN_APP_ID = 'qt-app-id'
     QITIAN_APP_SECRET = 'qt-app-secret'
+
+    QINIU_ACCESS_KEY = 'qiniu-access-key'
+    QINIU_SECRET_KEY = 'qiniu-secret-key'
+    RES_BUCKET = 'qiniu-res-bucket'
+    RES_CDN_HOST = 'res-cdn-host'
 
 
 CI = ConfigInstance
