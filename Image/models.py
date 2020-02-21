@@ -151,6 +151,8 @@ class Image(Resource):
         if orientation >= 5:
             width, height = height, width
 
+        print('album')
+
         try:
             return cls.objects.create(
                 **kwargs,
@@ -205,8 +207,11 @@ class Image(Resource):
 
     def d(self):
         return self.dictor(
-            'source', 'width', 'height', 'color_average', 'rotate', 'create_time',
+            'source', 'width', 'height', 'color_average', 'create_time',
             'res_id->image_id', 'grid_position', 'orientation')
+
+    def d_avatar(self):
+        return self.dictor('source')
 
 
 class ImageP:
