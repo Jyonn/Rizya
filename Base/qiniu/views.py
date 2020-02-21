@@ -19,7 +19,7 @@ class QiniuImageView(View):
     def post(r):
         qn_res_manager.auth_callback(r)
 
-        action = r.d.aciton  # type:str
+        action = r.d.action  # type:str
         color_average = r.d.color_average['RGB']  # type: str
         image_info = r.d.image_info
 
@@ -31,10 +31,7 @@ class QiniuImageView(View):
         width, height = image_info['width'], image_info['height']
 
         album = None
-        print(r.d.album)
-        print('check action', action, ImageUploadAction.ALBUM)
         if action == ImageUploadAction.ALBUM:
-            print('wow')
             album = r.d.album
 
         image = Image.create(

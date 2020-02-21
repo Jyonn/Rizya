@@ -151,8 +151,6 @@ class Image(Resource):
         if orientation >= 5:
             width, height = height, width
 
-        print(kwargs)
-
         try:
             return cls.objects.create(
                 **kwargs,
