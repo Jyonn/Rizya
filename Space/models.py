@@ -3,10 +3,12 @@ import string
 
 from SmartDjango import models, E
 from django.db import transaction
+from smartify import P
 
 from Album.models import Album
 from Base.cenum import CEnum
 from Base.error import error_add_class_prefix
+from User.models import User
 
 
 @E.register(id_processor=error_add_class_prefix)
@@ -212,7 +214,17 @@ class SpaceMan(models.Model):
         default=True,
     )
 
-    # def get(self, space, user):
+    @classmethod
+    def get_by_union(cls, space_user_union: str):
+        space_name, user_id = space_user_union.split('-', 2)
+        space = Space.get(space_name)
+        user = User.get(user_id)
+        return space.get_man(user)
+
+    def set_avatar(self, image):
+        self.avatar.remove()
+        self.avatar = image
+        self.save()
 
     def _readable_user(self):
         return self.user.d()
@@ -222,7 +234,7 @@ class SpaceMan(models.Model):
 
     def _readable_avatar(self):
         if self.avatar:
-            return self.avatar.source
+            return self.avatar.get_sources()
         return None
 
     def d_space(self):
@@ -250,3 +262,5 @@ class SpaceP:
 
     name_getter = name.clone().rename(
         'name', yield_name='space', stay_origin=True).process(Space.get)
+
+    spaceman_getter = P('space_user', 'spaceman').process(SpaceMan.get_by_union)

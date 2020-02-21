@@ -79,10 +79,10 @@ class Resource(models.Model):
         return self.create_time.timestamp()
 
 
-
 @E.register(id_processor=error_add_class_prefix)
 class ImageError:
     NOT_FOUND = E("图片不存在")
+    CREATE = E("图片上传失败")
 
 
 class ImageUploadAction:
@@ -114,9 +114,29 @@ class Image(Resource):
         on_delete=models.CASCADE,
     )
 
-    rotate = models.BooleanField(
-        default=False,
+    orientation = models.IntegerField(
+        default=1,
     )
+
+    @classmethod
+    def orientation_str2int(cls, orientation: list):
+        if orientation[0] == 'TOP':
+            return 1 if orientation[1] == 'LEFT' else 2
+        elif orientation[0] == 'BOTTOM':
+            return 4 if orientation[1] == 'LEFT' else 3
+        elif orientation[1] == 'TOP':
+            return 5 if orientation[1] == 'LEFT' else 6
+        else:
+            return 8 if orientation[1] == 'LEFT' else 7
+
+    @classmethod
+    def orientation_int2str(cls, orientation: int):
+        o = orientation - 1
+        s = [''] * 2
+
+        s[o // 4] = 'TOP' if orientation in [1, 2, 5, 6] else 'BOTTOM'
+        s[1 - o // 4] = 'LEFT' if orientation in [1, 4, 5, 8] else 'RIGHT'
+        return '-'.join(s)
 
     @classmethod
     def get(cls, res_id):
@@ -124,6 +144,23 @@ class Image(Resource):
             return cls.objects.get(res_id=res_id)
         except cls.DoesNotExist:
             return ImageError.NOT_FOUND
+
+    @classmethod
+    def create(cls, width, height, orientation, **kwargs):
+        if orientation >= 5:
+            width, height = height, width
+
+        try:
+            return cls.objects.create(
+                **kwargs,
+                width=width,
+                height=height,
+                orientation=orientation,
+                res_id=cls.generate_res_id(),
+                grid_position=None,
+            )
+        except Exception as err:
+            raise ImageError.CREATE(debug_message=err)
 
     @classmethod
     def get_token(cls, action, **kwargs):
@@ -148,21 +185,27 @@ class Image(Resource):
         return qn_res_manager.get_image(
             self.key, expires=expires, auto_rotate=auto_rotate, resize=resize)
 
-    def remove(self):
-        qn_res_manager.delete_res(self.key)
-        self.delete()
-
-    def _readable_source(self):
+    def get_sources(self):
         return dict(
             origin=self.get_source(auto_rotate=False, resize=None),
             square=self.get_source(auto_rotate=True, resize=(200, 200)),
             rotate=self.get_source(auto_rotate=True, resize=None)
         )
 
+    def remove(self):
+        qn_res_manager.delete_res(self.key)
+        self.delete()
+
+    def _readable_source(self):
+        return self.get_sources()
+
+    def _readable_orientation(self):
+        return [self.orientation, self.orientation_int2str(self.orientation)]
+
     def d(self):
         return self.dictor(
             'source', 'width', 'height', 'color_average', 'rotate', 'create_time',
-            'res_id->image_id', 'grid_position')
+            'res_id->image_id', 'grid_position', 'orientation')
 
 
 class ImageP:

@@ -53,7 +53,9 @@ class Album(Resource):
                 name=name,
                 grid_rows=4,
                 auto_arrange=True,
-                cover=None
+                cover=None,
+                res_id=self.generate_res_id(),
+                grid_position=None,
             )
         except Exception:
             raise AlbumError.CREATE
