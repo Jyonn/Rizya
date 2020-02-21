@@ -112,6 +112,7 @@ class Image(Resource):
     album = models.ForeignKey(
         'Album.Album',
         on_delete=models.CASCADE,
+        null=True,
     )
 
     orientation = models.IntegerField(
