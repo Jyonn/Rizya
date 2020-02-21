@@ -31,7 +31,7 @@ class Policy:
     def customize(**kwargs):
         kwargs.update(IMAGE_BODY)
         callback_body = json.dumps(kwargs, ensure_ascii=False)
-        callback_body.replace('"$(imageInfo)"', '$(imageInfo)') \
+        callback_body = callback_body.replace('"$(imageInfo)"', '$(imageInfo)') \
             .replace('"$(imageAve)"', '$(imageAve)')
 
         policy = dict(
