@@ -30,10 +30,12 @@ class Policy:
     @staticmethod
     def customize(**kwargs):
         kwargs.update(IMAGE_BODY)
+        callback_body = json.dumps(kwargs, ensure_ascii=False)
+        callback_body.replace('"$(imageInfo)"', '$(imageInfo)') \
+            .replace('"$(imageAve)"', '$(imageAve)')
+
         policy = dict(
-            callbackBody=json.dumps(kwargs, ensure_ascii=False)
+            callbackBody=callback_body
         )
         policy.update(IMAGE_POLICY)
-        print('policy')
-        print(policy)
         return policy
