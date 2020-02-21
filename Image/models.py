@@ -151,7 +151,7 @@ class Image(Resource):
         if orientation >= 5:
             width, height = height, width
 
-        print('album')
+        print(kwargs)
 
         try:
             return cls.objects.create(
