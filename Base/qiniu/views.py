@@ -16,8 +16,6 @@ class QiniuImageView(View):
         'key', 'action', 'mime_type', 'color_average', 'image_info',
         AlbumP.id_getter.clone().default()])
     def post(r):
-        print('sorry?')
-        print(r.body)
         qn_res_manager.auth_callback(r)
 
         action = r.d.aciton
@@ -25,4 +23,6 @@ class QiniuImageView(View):
         # if action == ImageUploadAction.ALBUM:
         #     album = r.d.album  # type: Album
         #     album.
-        # print(r.d.dict())
+        print(r.d.dict())
+
+        return 1
