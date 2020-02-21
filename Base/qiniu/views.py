@@ -12,9 +12,9 @@ class QiniuImageView(View):
     """/base/3-party/qiniu/image"""
 
     @staticmethod
-    # @Analyse.r(b=[
-    #     'key', 'action', 'mime_type', 'color_average', 'image_info',
-    #     AlbumP.id_getter.clone().default()])
+    @Analyse.r(b=[
+        'key', 'action', 'mime_type', 'color_average', 'image_info',
+        AlbumP.id_getter.clone().default()])
     def post(r):
         print('sorry?')
         print(r.body)
