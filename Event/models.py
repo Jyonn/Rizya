@@ -178,6 +178,9 @@ class Event(models.Model):
         if self.album:
             return self.album.res_id
 
+    def _readable_start_date(self):
+        return self.start_date.strftime('%Y-%m-%d')
+
     def d_et(self):
         return self.dictor('start_date', 'duration', 'name', 'album_id', 'event_id')
 
