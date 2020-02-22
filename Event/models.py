@@ -71,8 +71,8 @@ class EventType(models.Model):
 
     @staticmethod
     def _valid_emoji(emoji):
-        from emoji import UNICODE_EMOJI
-        if emoji not in UNICODE_EMOJI:
+        from lemoji import EMOJI_LIST
+        if emoji not in EMOJI_LIST:
             raise EventError.EMOJI
 
     @classmethod
