@@ -1,3 +1,5 @@
+import datetime
+
 from SmartDjango import models, E
 from django.utils.crypto import get_random_string
 
@@ -194,3 +196,4 @@ class EventP:
         'event_id', 'start_date', 'duration', 'name')
     id_getter = event_id.clone().rename(
         'event_id', yield_name='event', stay_origin=True).process(Event.get)
+    start_date.process(lambda s: datetime.datetime.strptime(s, '%Y-%m-%d').date(), begin=True)
