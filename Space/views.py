@@ -2,6 +2,7 @@ from SmartDjango import Analyse
 from django.views import View
 
 from Base.auth import Auth
+from Event.models import EventType
 from Space.models import SpaceP, Space, SpaceMan
 from User.models import UserP
 

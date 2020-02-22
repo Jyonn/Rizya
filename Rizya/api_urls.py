@@ -6,4 +6,5 @@ urlpatterns = [
     path('user/', include('User.urls')),
     path('space/', include('Space.urls')),
     path('album/', include('Album.urls')),
+    path('event/', include('Event.urls')),
 ]

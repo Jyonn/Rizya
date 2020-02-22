@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'Space',
     'Album',
     'Image',
+    'Event',
 ]
 
 MIDDLEWARE = [

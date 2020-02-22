@@ -84,3 +84,5 @@ class AlbumP:
 
     id_getter = album_id.clone().rename(
         'album_id', yield_name='album', stay_origin=True).process(Album.get)
+
+    auto_arrange, grid_rows = Album.get_params('auto_arrange', 'grid_rows')

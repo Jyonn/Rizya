@@ -30,6 +30,10 @@ class AlbumIDView(View):
         """新增子相册"""
         return r.d.album.born(r.d.name).d()
 
+    # @staticmethod
+    # @Analyse.r(a=[AlbumP.id_getter], b=[AlbumP.name])
+    # def put(r):
+
 
 class AlbumCoverView(View):
     @staticmethod
