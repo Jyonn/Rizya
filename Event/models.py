@@ -30,7 +30,7 @@ class EventType(models.Model):
     )
 
     emoji = models.CharField(
-        max_length=1,
+        max_length=10,
         min_length=1,
         verbose_name='事件的emoji表示',
     )
