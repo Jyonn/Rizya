@@ -20,6 +20,7 @@ class EventType(models.Model):
         min_length=6,
         unique=True,
         verbose_name='事件组ID',
+        default=None,
     )
 
     name = models.CharField(
@@ -43,12 +44,14 @@ class EventType(models.Model):
         'Image.Image',
         on_delete=models.SET_NULL,
         null=True,
+        related_name='default_cover'
     )
 
     current_cover = models.ForeignKey(
         'Image.Image',
         on_delete=models.SET_NULL,
         null=True,
+        related_name='current_cover',
     )
 
     @classmethod
@@ -113,6 +116,7 @@ class Event(models.Model):
         max_length=6,
         min_length=6,
         unique=True,
+        default=None,
     )
 
     event_type = models.ForeignKey(
