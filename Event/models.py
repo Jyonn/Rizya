@@ -175,7 +175,8 @@ class Event(models.Model):
         self.save()
 
     def _readable_album_id(self):
-        return self.album.res_id
+        if self.album:
+            return self.album.res_id
 
     def d_et(self):
         return self.dictor('start_date', 'duration', 'name', 'album_id', 'event_id')
