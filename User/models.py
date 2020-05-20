@@ -66,7 +66,7 @@ class User(models.Model):
     @staticmethod
     def get(user_id):
         try:
-            return User.objects.get(user_id__iexist=user_id)
+            return User.objects.get(user_id__iexact=user_id)
         except User.DoesNotExist:
             raise UserError.NOT_FOUND
 
