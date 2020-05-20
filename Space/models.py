@@ -272,4 +272,4 @@ class SpaceP:
     name_getter = name.clone().rename(
         'name', yield_name='space', stay_origin=True).process(Space.get)
 
-    spaceman_getter = P('space_user', 'spaceman').process(SpaceMan.get_by_union)
+    spaceman_getter = P('space_user', yield_name='spaceman').process(SpaceMan.get_by_union)

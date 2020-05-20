@@ -19,8 +19,6 @@ class QiniuImageView(View):
     def post(r):
         qn_res_manager.auth_callback(r)
 
-        print(r.d.dict())
-
         action = r.d.action  # type:str
         color_average = r.d.color_average['RGB']  # type: str
         image_info = r.d.image_info
@@ -36,8 +34,6 @@ class QiniuImageView(View):
         if action == ImageUploadAction.ALBUM:
             album = r.d.album
 
-        print('start create')
-
         image = Image.create(
             **r.d.dict('key', 'mime_type'),
             color_average=color_average,
@@ -46,9 +42,6 @@ class QiniuImageView(View):
             orientation=orientation,
             album=album,
         )
-
-        print('created')
-        return 'goodbye'
 
         if action == ImageUploadAction.SPACEMAN:
             spaceman = r.d.spaceman
