@@ -36,6 +36,8 @@ class QiniuImageView(View):
         if action == ImageUploadAction.ALBUM:
             album = r.d.album
 
+        return 0
+
         image = Image.create(
             **r.d.dict('key', 'mime_type'),
             color_average=color_average,
