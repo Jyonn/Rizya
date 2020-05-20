@@ -151,18 +151,17 @@ class Image(Resource):
         if orientation >= 5:
             width, height = height, width
 
-        print(kwargs)
-        # try:
-        return cls.objects.create(
-            **kwargs,
-            width=width,
-            height=height,
-            orientation=orientation,
-            res_id=cls.generate_res_id(),
-            grid_position=None,
-        )
-        # except Exception as err:
-        #     raise ImageError.CREATE(debug_message=err)
+        try:
+            return cls.objects.create(
+                **kwargs,
+                width=width,
+                height=height,
+                orientation=orientation,
+                res_id=cls.generate_res_id(),
+                grid_position=None,
+            )
+        except Exception as err:
+            raise ImageError.CREATE(debug_message=err)
 
     @classmethod
     def get_token(cls, action, **kwargs):

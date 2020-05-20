@@ -45,8 +45,6 @@ class QiniuImageView(View):
             album=album,
         )
 
-        return 0
-
         if action == ImageUploadAction.SPACEMAN:
             spaceman = r.d.spaceman
             spaceman.set_avatar(image)
