@@ -48,6 +48,7 @@ class QiniuImageView(View):
         )
 
         print('created')
+        return 'goodbye'
 
         if action == ImageUploadAction.SPACEMAN:
             spaceman = r.d.spaceman
