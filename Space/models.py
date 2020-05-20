@@ -224,7 +224,8 @@ class SpaceMan(models.Model):
         return '-'.join([self.space.name, self.user.user_id])
 
     def set_avatar(self, image):
-        self.avatar.remove()
+        if self.avatar:
+            self.avatar.remove()
         self.avatar = image
         self.save()
 
