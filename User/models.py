@@ -3,10 +3,8 @@ import re
 from SmartDjango import models, E, Hc
 from smartify import P
 
-from Base.error import error_add_class_prefix
 
-
-@E.register(id_processor=error_add_class_prefix)
+@E.register(id_processor=E.idp_cls_prefix())
 class UserError:
     NOT_FOUND = E("不存在的用户", hc=Hc.NotFound)
     CREATE = E("新建用户错误", hc=Hc.InternalServerError)

@@ -2,11 +2,10 @@ import datetime
 
 from SmartDjango import models, E
 from django.utils.crypto import get_random_string
+from lemoji import EMOJI_LIST
 
-from Base.utils import error_add_class_prefix
 
-
-@E.register(id_processor=error_add_class_prefix)
+@E.register(id_processor=E.idp_cls_prefix())
 class EventError:
     CREATE_TYPE = E("新建事件组失败")
     CREATE = E("添加事件失败")
@@ -14,9 +13,11 @@ class EventError:
     TYPE_NOT_FOUND = E("找不到事件组")
     TYPE_NOT_BELONG = E("事件组不属于此空间")
     NOT_FOUND = E("找不到此事件")
+    BIND_ALBUM = E("已绑定相册")
 
 
 class EventType(models.Model):
+    """事件组"""
     etid = models.CharField(
         max_length=6,
         min_length=6,
@@ -73,7 +74,6 @@ class EventType(models.Model):
 
     @staticmethod
     def _valid_emoji(emoji):
-        from lemoji import EMOJI_LIST
         if emoji not in EMOJI_LIST:
             raise EventError.EMOJI
 
@@ -171,6 +171,8 @@ class Event(models.Model):
         self.save()
 
     def bind_album(self, album):
+        if self.album:
+            raise EventError.BIND_ALBUM
         self.album = album
         self.save()
 

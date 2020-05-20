@@ -4,18 +4,18 @@ import re
 from SmartDjango import models, E
 from django.utils.crypto import get_random_string
 
-from Base.error import error_add_class_prefix
 from Base.qiniu.policy import Policy
 from Base.qiniu.qn import qn_res_manager
 
 
-@E.register(id_processor=error_add_class_prefix)
+@E.register(id_processor=E.idp_cls_prefix())
 class ResourceError:
     NOT_FOUND = E("资源不存在")
     GRID_POSITION = E("网格坐标格式错误")
 
 
 class Resource(models.Model):
+    """资源类 图片或相册"""
     class Meta:
         abstract = True
 
@@ -79,7 +79,7 @@ class Resource(models.Model):
         return self.create_time.timestamp()
 
 
-@E.register(id_processor=error_add_class_prefix)
+@E.register(id_processor=E.idp_cls_prefix())
 class ImageError:
     NOT_FOUND = E("图片不存在")
     CREATE = E("图片上传失败")
@@ -204,12 +204,12 @@ class Image(Resource):
         return [self.orientation, self.orientation_int2str(self.orientation)]
 
     def d(self):
-        return self.dictor(
+        return self.dictify(
             'source', 'width', 'height', 'color_average', 'create_time',
             'res_id->image_id', 'grid_position', 'orientation')
 
     def d_avatar(self):
-        return self.dictor('source')
+        return self.dictify('source')
 
 
 class ImageP:

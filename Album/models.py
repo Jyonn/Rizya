@@ -1,10 +1,9 @@
 from SmartDjango import models, E
 
-from Base.utils import error_add_class_prefix
 from Image.models import Resource, Image
 
 
-@E.register(id_processor=error_add_class_prefix)
+@E.register(id_processor=E.idp_cls_prefix())
 class AlbumError:
     CREATE = E("创建相册失败")
 
@@ -65,7 +64,7 @@ class Album(Resource):
         self.save()
 
     def d(self):
-        return self.dictor(
+        return self.dictify(
             'name', 'grid_rows', 'auto_arrange', 'cover', 'res_id->album_id',
             'create_time', 'grid_position')
 

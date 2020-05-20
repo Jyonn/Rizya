@@ -2,32 +2,44 @@ from SmartDjango import Analyse
 from django.views import View
 
 from Base.auth import Auth
-from Event.models import EventType
 from Space.models import SpaceP, Space, SpaceMan
-from User.models import UserP
+from User.models import UserP, User
 
 
 class SpaceView(View):
+    """/space"""
+
+    @staticmethod
+    @Auth.require_login
+    def get(r):
+        """获取我的空间"""
+        user = r.user  # type: User
+        return user.spaceman_set.dict(SpaceMan.d_user)
+
     @staticmethod
     @Analyse.r(b=[SpaceP.name, SpaceP.access])
     @Auth.require_login
     def post(r):
+        """新建空间"""
         return Space.create(**r.d.dict(), user=r.user).d()
 
 
-class SpaceNameView(View):
+class NameView(View):
+    """/space/:name"""
     @staticmethod
     @Analyse.r(a=[SpaceP.name_getter])
     def get(r):
+        """获取空间信息"""
         return r.d.space.d()
 
 
-class SpaceManView(View):
+class MemberView(View):
     """/space/members"""
 
     @staticmethod
     @Analyse.r(a=[SpaceP.name_getter])
     def get(r):
+        """获取空间用户信息"""
         return r.d.space.spaceman_set.dict(SpaceMan.d_space)
 
     @staticmethod
@@ -55,3 +67,15 @@ class SpaceManView(View):
         space = r.d.space
         space.owner_checker(r.user)
         space.remove_man(r.d.users)
+
+
+class MemberAvatarView(View):
+    """/space/member/avatar"""
+    @staticmethod
+    @Analyse.r(a=[SpaceP.name_getter])
+    @Auth.require_login
+    def get(r):
+        space = r.d.space  # type: Space
+        spaceman = space.get_man(r.user)  # type: SpaceMan
+
+        return spaceman.get_image_token()

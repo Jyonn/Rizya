@@ -19,6 +19,8 @@ class QiniuImageView(View):
     def post(r):
         qn_res_manager.auth_callback(r)
 
+        print(r.d.dict())
+
         action = r.d.action  # type:str
         color_average = r.d.color_average['RGB']  # type: str
         image_info = r.d.image_info

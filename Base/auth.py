@@ -6,7 +6,7 @@ from Base.jtoken import JWT
 from User.models import User
 
 
-@E.register()
+@E.register(id_processor=E.idp_cls_prefix())
 class AuthError:
     REQUIRE_LOGIN = E("需要登录", hc=Hc.Unauthorized)
     TOKEN_MISS_PARAM = E("认证口令缺少参数{0}", hc=Hc.Forbidden)

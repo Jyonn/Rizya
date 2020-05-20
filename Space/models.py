@@ -6,12 +6,11 @@ from django.db import transaction
 from smartify import P
 
 from Album.models import Album
-from Base.cenum import CEnum
-from Base.error import error_add_class_prefix
+from Image.models import Image, ImageUploadAction
 from User.models import User
 
 
-@E.register(id_processor=error_add_class_prefix)
+@E.register(id_processor=E.idp_cls_prefix())
 class SpaceError:
     INVALID_NAME_SIDE = E("空间名首尾字符只能是字母")
     INVALID_NAME = E("空间名只能包含字母数字和中下划线")
@@ -25,7 +24,7 @@ class SpaceError:
     MEMBER_NOT_FOUND = E("成员不存在")
 
 
-class AccessChoices(CEnum):
+class AccessChoices(models.CEnum):
     ANY = 'any'
     USR = 'user'
     PRV = 'privacy'
@@ -216,10 +215,13 @@ class SpaceMan(models.Model):
 
     @classmethod
     def get_by_union(cls, space_user_union: str):
-        space_name, user_id = space_user_union.split('-', 2)
+        space_name, user_id = space_user_union.rsplit('-', 1)
         space = Space.get(space_name)
         user = User.get(user_id)
         return space.get_man(user)
+
+    def get_union(self):
+        return '-'.join([self.space.name, self.user.user_id])
 
     def set_avatar(self, image):
         self.avatar.remove()
@@ -238,10 +240,10 @@ class SpaceMan(models.Model):
         return None
 
     def d_space(self):
-        return self.dictor('user', 'avatar', 'name', 'is_owner', 'accept_invite')
+        return self.dictify('user', 'avatar', 'name', 'is_owner', 'accept_invite')
 
     def d_user(self):
-        return self.dictor('avatar', 'name', 'is_owner', 'accept_invite', 'space')
+        return self.dictify('avatar', 'name', 'is_owner', 'accept_invite', 'space')
 
     def accept(self, accept):
         if self.accept_invite:
@@ -256,9 +258,15 @@ class SpaceMan(models.Model):
     def remove(self):
         self.delete()
 
+    def get_image_token(self):
+        return Image.get_token(
+            action=ImageUploadAction.SPACEMAN,
+            space_user=self.get_union(),
+        )
+
 
 class SpaceP:
-    name, rename_card, access = Space.get_params('name', 'rename_card', 'access')
+    name, rename_card, access = Space.P('name', 'rename_card', 'access')
 
     name_getter = name.clone().rename(
         'name', yield_name='space', stay_origin=True).process(Space.get)
