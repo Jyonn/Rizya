@@ -7,6 +7,7 @@ from SmartDjango import NetPacker
 from Config.models import Config, CI
 
 NetPacker.set_mode(debug=True)
+NetPacker.customize_http_code(fixed_http_code=200)
 
 QITIAN_APP_ID = Config.get_value_by_key(CI.QITIAN_APP_ID)
 QITIAN_APP_SECRET = Config.get_value_by_key(CI.QITIAN_APP_SECRET)
