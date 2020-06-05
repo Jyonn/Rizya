@@ -24,7 +24,7 @@ class Config(models.Model):
         try:
             return cls.objects.get(key=key)
         except cls.DoesNotExist as err:
-            raise ConfigError.CONFIG_NOT_FOUND(debug_message=err)
+            raise ConfigError.NOT_FOUND(debug_message=err)
 
     @classmethod
     def get_value_by_key(cls, key, default=None):
@@ -42,7 +42,7 @@ class Config(models.Model):
             config.value = value
             config.save()
         except E as e:
-            if e.eid(ConfigError.CONFIG_NOT_FOUND):
+            if e == ConfigError.NOT_FOUND:
                 try:
                     config = cls(
                         key=key,
@@ -50,11 +50,11 @@ class Config(models.Model):
                     )
                     config.save()
                 except Exception as err:
-                    raise ConfigError.CREATE_CONFIG(debug_message=err)
+                    raise ConfigError.CREATE(debug_message=err)
             else:
                 raise e
         except Exception as err:
-            ConfigError.CREATE_CONFIG(debug_message=err)
+            raise ConfigError.CREATE(debug_message=err)
 
 
 class ConfigInstance:
