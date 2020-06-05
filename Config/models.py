@@ -65,6 +65,10 @@ class ConfigInstance:
     QITIAN_APP_ID = 'qt-app-id'
     QITIAN_APP_SECRET = 'qt-app-secret'
 
+    WX_APP_ID = 'wx-app-id'
+    WX_APP_SECRET = 'wx-app-secret'
+    WX_ACCESS_TOKEN = 'wx-access-token'
+
     QINIU_ACCESS_KEY = 'qiniu-access-key'
     QINIU_SECRET_KEY = 'qiniu-secret-key'
     RES_BUCKET = 'qiniu-res-bucket'

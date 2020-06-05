@@ -86,6 +86,7 @@ class ImageError:
 
 
 class ImageUploadAction:
+    MILESTONE = 'milestone'
     ALBUM = 'album'
     SPACEMAN = 'spaceman'
 
@@ -208,7 +209,7 @@ class Image(Resource):
             'source', 'width', 'height', 'color_average', 'create_time',
             'res_id->image_id', 'grid_position', 'orientation')
 
-    def d_avatar(self):
+    def d_base(self):
         return self.dictify('source')
 
 

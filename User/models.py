@@ -1,6 +1,5 @@
-import re
-
 from SmartDjango import models, E, Hc
+from django.utils.crypto import get_random_string
 from smartify import P
 
 
@@ -8,7 +7,6 @@ from smartify import P
 class UserError:
     NOT_FOUND = E("不存在的用户", hc=Hc.NotFound)
     CREATE = E("新建用户错误", hc=Hc.InternalServerError)
-    INVALID_USER_ID = E("用户名只能包含字母数字和下划线")
 
 
 class User(models.Model):
@@ -17,10 +15,6 @@ class User(models.Model):
         min_length=4,
         unique=True,
         null=True,
-    )
-
-    rename_card = models.PositiveSmallIntegerField(
-        default=1,
     )
 
     avatar = models.CharField(
@@ -36,96 +30,53 @@ class User(models.Model):
         default=None,
         blank=True,
         null=True,
-        max_length=10,
+        max_length=64,
     )
 
-    qt_user_app_id = models.CharField(
-        verbose_name='齐天簿ID',
-        max_length=16,
+    openid = models.CharField(
+        max_length=64,
+        unique=True,
     )
 
-    qt_token = models.CharField(
-        verbose_name='齐天簿口令',
-        max_length=256,
-        min_length=4,
-    )
+    @classmethod
+    def get_unique_id(cls):
+        while True:
+            user_id = get_random_string(length=6)
+            try:
+                cls.get(user_id)
+            except E:
+                return user_id
 
-    phone = models.CharField(
-        max_length=20,
-        null=True,
-        blank=True,
-        default=None,
-    )
-
-    @staticmethod
-    def _valid_user_id(user_id):
-        valid_chars = '^[A-Za-z0-9_]+$'
-        if re.match(valid_chars, user_id) is None:
-            raise UserError.INVALID_USER_ID
-
-    @staticmethod
-    def get(user_id):
+    @classmethod
+    def get(cls, user_id):
         try:
-            return User.objects.get(user_id__iexact=user_id)
-        except User.DoesNotExist:
+            return cls.objects.get(user_id=user_id)
+        except cls.DoesNotExist:
             raise UserError.NOT_FOUND
 
-    @staticmethod
-    def get_by_qt(qt_user_app_id):
-        try:
-            return User.objects.get(qt_user_app_id=qt_user_app_id)
-        except User.DoesNotExist as err:
-            raise UserError.NOT_FOUND(debug_message=err)
-
     @classmethod
-    def is_user_id_unique(cls, user_id: str):
+    def get_or_create(cls, openid):
         try:
-            cls.objects.get(user_id__iexact=user_id.lower())
+            return cls.objects.get(openid=openid)
         except cls.DoesNotExist:
-            return True
-        return False
-
-    @classmethod
-    def create(cls, qt_user_app_id, qt_token):
-        cls.validator(locals())
+            pass
 
         try:
-            user = cls.get_by_qt(qt_user_app_id)
-            user.qt_token = qt_token
-            user.save()
-            return user
-        except E as e:
-            try:
-                return cls.objects.create(
-                    user_id=qt_user_app_id,
-                    rename_card=1,
-                    qt_user_app_id=qt_user_app_id,
-                    qt_token=qt_token,
-                )
-            except Exception as err:
-                raise UserError.CREATE(debug_message=err)
+            return cls.objects.create(
+                openid=openid,
+                user_id=cls.get_unique_id(),
+            )
+        except Exception as err:
+            raise UserError.CREATE(debug_message=err)
 
-    def update(self):
-        from Base.common import qt_manager
-        data = qt_manager.get_user_info(self.qt_token)
-        self.avatar = data['avatar']
-        self.nickname = data['nickname']
-        self.phone = qt_manager.get_user_phone(self.qt_token)
-        self.save()
-
-    def rename(self, user_id: str):
-        if self.rename_card < 1:
-            raise UserError.REQUIRE_RENAME_CARD
-
-        if not self.is_user_id_unique(user_id):
-            raise UserError.NAME_EXIST
-
-        self.user_id = user_id
-        self.rename_card -= 1
+    def update(self, avatar, nickname):
+        self.validator(locals())
+        self.avatar = avatar
+        self.nickname = nickname
         self.save()
 
     def d(self):
-        return self.dictor('nickname', 'avatar', 'user_id')
+        return self.dictify('nickname', 'avatar', 'user_id')
 
 
 class UserP:

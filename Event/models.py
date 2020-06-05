@@ -184,7 +184,7 @@ class Event(models.Model):
         return self.start_date.strftime('%Y-%m-%d')
 
     def d_et(self):
-        return self.dictor('start_date', 'duration', 'name', 'album_id', 'event_id')
+        return self.dictify('start_date', 'duration', 'name', 'album_id', 'event_id')
 
     def remove(self):
         self.delete()

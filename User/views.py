@@ -2,45 +2,39 @@ from SmartDjango import Analyse, P
 from django.views import View
 
 from Base.auth import Auth
-from Space.models import SpaceMan
+from Base.weixin import Weixin
 from User.models import User
-from Base.common import qt_manager
 
 
-class UserOAuthView(View):
+class CodeView(View):
     @staticmethod
-    @Analyse.r([P('code', '授权码')])
-    def post(r):
-        """POST /user/oauth
-
-        打通齐天簿OAuth
-        """
+    @Analyse.r(q=['code'])
+    def get(r):
         code = r.d.code
-        data = qt_manager.get_token(code)
-        qt_token = data['token']
-        qt_user_app_id = data['user_app_id']
 
-        user = User.create(qt_user_app_id, qt_token)
-        user.update()
+        data = Weixin.code2session(code)
+        openid = data['openid']
+        session_key = data['session_key']
 
-        return Auth.get_login_token(user)
+        user = User.get_or_create(openid)
+        return Auth.get_login_token(user, session_key=session_key)
 
 
 class UserView(View):
     @staticmethod
+    @Analyse.r(['encrypted_data', 'iv'])
     @Auth.require_login
-    def get(r):
-        """GET /user/
+    def put(r):
+        user = r.user  # type: User
+        session_key = r.session_key
 
-        获取用户基本信息
-        """
-        r.user.update()
-        return r.user.d()
+        encrypted_data = r.d.encrypted_data
+        iv = r.d.iv
 
+        data = Weixin.decrypt(encrypted_data, iv, session_key)
 
-class UserInviteView(View):
-    @staticmethod
-    @Auth.require_login
-    def get(r):
-        return r.user.spaceman_set.filter(
-            accept_invite=False).dict(SpaceMan.d_user)
+        avatar = data['avatarUrl']
+        nickname = data['nickName']
+        user.update(avatar, nickname)
+
+        return user.d()

@@ -2,6 +2,8 @@ from functools import wraps
 
 from SmartDjango import E, Hc
 
+from Base.common import DEV_MODE
+from Base.crypto import Crypto
 from Base.jtoken import JWT
 from User.models import User
 
@@ -22,9 +24,14 @@ class Auth:
         return JWT.decrypt(jwt_str)
 
     @staticmethod
-    def get_login_token(user: User):
+    def get_login_token(user: User, session_key):
+        if DEV_MODE:
+            encrypt_session_key = session_key
+        else:
+            encrypt_session_key = Crypto.AES.encrypt(session_key)
         token, _dict = JWT.encrypt(dict(
-            user_id=user.qt_user_app_id,
+            user_id=user.user_id,
+            session_key=encrypt_session_key,
         ))
         _dict['token'] = token
         _dict['user'] = user.d()
@@ -38,9 +45,15 @@ class Auth:
         user_id = dict_.get('user_id')
         if not user_id:
             raise AuthError.TOKEN_MISS_PARAM('user_id')
+        session_key = dict_.get("session_key")
+        if not session_key:
+            raise AuthError.TOKEN_MISS_PARAM('session_key')
 
-        from User.models import User
-        r.user = User.get_by_qt(user_id)
+        if DEV_MODE:
+            r.session_key = session_key
+        else:
+            r.session_key = Crypto.AES.decrypt(session_key)
+        r.user = User.get(user_id)
 
     @classmethod
     def require_login(cls, func):

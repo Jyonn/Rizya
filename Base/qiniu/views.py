@@ -4,6 +4,7 @@ from django.views import View
 from Album.models import AlbumP
 from Base.qiniu.qn import qn_res_manager
 from Image.models import ImageUploadAction, Image
+from Milestone.models import MilestoneP
 from Space.models import SpaceP
 
 
@@ -15,6 +16,7 @@ class QiniuImageView(View):
         'key', 'action', 'mime_type', 'color_average', 'image_info',
         AlbumP.id_getter.clone().default(),
         SpaceP.spaceman_getter.clone().default(),
+        MilestoneP.id_getter.clone().default(),
     ])
     def post(r):
         qn_res_manager.auth_callback(r)
@@ -46,6 +48,11 @@ class QiniuImageView(View):
         if action == ImageUploadAction.SPACEMAN:
             spaceman = r.d.spaceman
             spaceman.set_avatar(image)
-            return image.d_avatar()
+            return image.d_base()
+
+        elif action == ImageUploadAction.MILESTONE:
+            milestone = r.d.milestone
+            milestone.set_cover(image)
+            return image.d_base()
 
         return image.d()
