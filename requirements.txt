@@ -1,8 +1,9 @@
 qiniu
 requests
-QitianSDK==0.1.0a0
 django
-SmartDjango>=3.6.4
-smartify>=0.0.2a5
 emoji
 lemoji
+
+PyJWT
+pycrypto
+SmartDjango==3.6.8
