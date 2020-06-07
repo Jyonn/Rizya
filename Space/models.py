@@ -3,6 +3,7 @@ import string
 
 from SmartDjango import models, E
 from django.db import transaction
+from django.utils.crypto import get_random_string
 from smartify import P
 
 from Album.models import Album
@@ -40,6 +41,14 @@ class Space(models.Model):
         null=False,
     )
 
+    name = models.CharField(
+        max_length=15,
+        min_length=2,
+        verbose_name='星球名',
+        default=None,
+        null=True,
+    )
+
     rename_card = models.PositiveSmallIntegerField(
         default=1,
         verbose_name='星球改ID卡',
@@ -74,12 +83,22 @@ class Space(models.Model):
             raise SpaceError.INVALID_ID
 
     @classmethod
-    def is_space_id_unique(cls, space_id: str):
+    def get_unique_id(cls):
+        while True:
+            space_id = get_random_string(length=8)
+            try:
+                cls.id_unique_checker(space_id)
+                return space_id
+            except E:
+                pass
+
+    @classmethod
+    def id_unique_checker(cls, space_id: str):
         try:
             cls.objects.get(space_id__iexact=space_id.lower())
         except cls.DoesNotExist:
-            return True
-        return False
+            return
+        raise SpaceError.ID_EXIST
 
     @classmethod
     def get(cls, space_id: str):
@@ -89,17 +108,16 @@ class Space(models.Model):
             raise SpaceError.NOT_FOUND
 
     @classmethod
-    def create(cls, space_id: str, access: str, start_date, user):
+    def create(cls, name, access, start_date, user):
         from Milestone.models import Milestone
-        if not cls.is_space_id_unique(space_id):
-            raise SpaceError.ID_EXIST
 
         try:
             with transaction.atomic():
                 space = cls.objects.create(
-                    space_id=space_id,
+                    space_id=cls.get_unique_id(),
                     rename_card=0,
                     access=access,
+                    name=name,
                 )
                 space.spaceman_set.create(
                     user=user,
@@ -124,15 +142,14 @@ class Space(models.Model):
                 )
                 space.set_default_milestone(milestone)
         except Exception as err:
-            raise SpaceError.CREATE(space_id, debug_message=err)
+            raise SpaceError.CREATE(name, debug_message=err)
         return space
 
     def rename(self, space_id: str):
         if self.rename_card < 1:
             raise SpaceError.REQUIRE_RENAME_CARD
 
-        if not self.is_space_id_unique(space_id):
-            raise SpaceError.ID_EXIST
+        self.id_unique_checker(space_id)
 
         self.space_id = space_id
         self.rename_card -= 1
@@ -272,7 +289,7 @@ class SpaceMan(models.Model):
 
 
 class SpaceP:
-    space_id, rename_card, access = Space.P('space_id', 'rename_card', 'access')
+    space_id, name, rename_card, access = Space.P('space_id', 'name', 'rename_card', 'access')
 
     id_getter = space_id.clone().rename(
         'space_id', yield_name='space', stay_origin=True).process(Space.get)

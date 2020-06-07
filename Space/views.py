@@ -18,7 +18,7 @@ class SpaceView(View):
         return user.spaceman_set.dict(SpaceMan.d_user)
 
     @staticmethod
-    @Analyse.r(b=[SpaceP.space_id, SpaceP.access, MilestoneP.start_date])
+    @Analyse.r(b=[SpaceP.name, SpaceP.access, MilestoneP.start_date])
     @Auth.require_login
     def post(r):
         """新建空间"""

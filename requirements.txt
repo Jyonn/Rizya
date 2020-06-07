@@ -1,9 +1,12 @@
-qiniu
-requests
-django
+qiniu~=7.2.6
+requests~=2.22.0
+django~=2.2.5
 emoji
-lemoji
+lemoji~=0.1b0
 
-PyJWT
+PyJWT~=1.7.1
 pycrypto
 SmartDjango==3.6.8
+
+QitianSDK~=0.1.0a0
+smartify~=0.0.2
