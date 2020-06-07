@@ -60,6 +60,7 @@ class Space(models.Model):
         default=None,
         null=True,
         on_delete=models.SET_NULL,
+        related_name='default_milestone'
     )
 
     @staticmethod
