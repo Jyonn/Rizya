@@ -113,6 +113,13 @@ class EventType(models.Model):
         self.delete()
 
 
+class EventTypeP:
+    name, emoji, etid = EventType.get_params('name', 'emoji', 'etid')
+
+    etid_getter = etid.clone().rename(
+        'etid', yield_name='event_type', stay_origin=True).process(EventType.get)
+
+
 class Event(models.Model):
     event_id = models.CharField(
         max_length=6,
@@ -140,6 +147,10 @@ class Event(models.Model):
         'Album.Album',
         on_delete=models.SET_NULL,
         null=True,
+    )
+
+    attends = models.ManyToManyField(
+        'Space.SpaceMan',
     )
 
     @classmethod
@@ -188,13 +199,6 @@ class Event(models.Model):
 
     def remove(self):
         self.delete()
-
-
-class EventTypeP:
-    name, emoji, etid = EventType.get_params('name', 'emoji', 'etid')
-
-    etid_getter = etid.clone().rename(
-        'etid', yield_name='event_type', stay_origin=True).process(EventType.get)
 
 
 class EventP:

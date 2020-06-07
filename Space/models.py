@@ -12,16 +12,17 @@ from User.models import User
 
 @E.register(id_processor=E.idp_cls_prefix())
 class SpaceError:
-    INVALID_NAME_SIDE = E("空间名首尾字符只能是字母")
-    INVALID_NAME = E("空间名只能包含字母数字和中下划线")
-    NAME_EXIST = E("空间名已存在")
-    CREATE = E("创建空间{0}失败")
-    INVITE = E("邀请用户失败")
-    REMOVE_MAN = E("移除成员失败")
+    INVALID_ID_SIDE = E("星球ID首尾字符只能是字母")
+    INVALID_ID = E("星球ID只能包含字母数字和中下划线")
+    ID_EXIST = E("星球ID已存在")
+    CREATE = E("创建星球{0}失败")
+    INVITE = E("邀请居民失败")
+    REMOVE_MAN = E("移除居民失败")
     NOT_FOUND = E("空间不存在")
     REQUIRE_RENAME_CARD = E("空间改名卡不足")
-    NOT_OWNER = E("不是空间管理员，无法操作")
-    MEMBER_NOT_FOUND = E("成员不存在")
+    NOT_OWNER = E("不是星球球主，无法操作")
+    NOT_MEMBER = E("不是星球居民，无法操作")
+    MEMBER_NOT_FOUND = E("居民不存在")
 
 
 class AccessChoices(models.CEnum):
@@ -31,17 +32,17 @@ class AccessChoices(models.CEnum):
 
 
 class Space(models.Model):
-    name = models.CharField(
+    space_id = models.CharField(
         max_length=20,
         min_length=4,
         unique=True,
-        verbose_name='空间名',
+        verbose_name='星球ID',
         null=False,
     )
 
     rename_card = models.PositiveSmallIntegerField(
         default=1,
-        verbose_name='空间改名卡',
+        verbose_name='星球改ID卡',
     )
 
     access = models.CharField(
@@ -54,40 +55,48 @@ class Space(models.Model):
         auto_now_add=True,
     )
 
+    default_milestone = models.ForeignKey(
+        'Milestone.Milestone',
+        default=None,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
     @staticmethod
-    def _valid_name(name):
-        if name[0] not in string.ascii_lowercase + string.ascii_uppercase:
-            raise SpaceError.INVALID_NAME_SIDE
-        if name[-1] not in string.ascii_lowercase + string.ascii_uppercase:
-            raise SpaceError.INVALID_NAME_SIDE
+    def _valid_space_id(space_id):
+        if space_id[0] not in string.ascii_lowercase + string.ascii_uppercase:
+            raise SpaceError.INVALID_ID_SIDE
+        if space_id[-1] not in string.ascii_lowercase + string.ascii_uppercase:
+            raise SpaceError.INVALID_ID_SIDE
         valid_chars = '^[A-Za-z0-9_-]+$'
-        if re.match(valid_chars, name) is None:
-            raise SpaceError.INVALID_NAME
+        if re.match(valid_chars, space_id) is None:
+            raise SpaceError.INVALID_ID
 
     @classmethod
-    def is_name_unique(cls, name: str):
+    def is_space_id_unique(cls, space_id: str):
         try:
-            cls.objects.get(name__iexact=name.lower())
+            cls.objects.get(space_id__iexact=space_id.lower())
         except cls.DoesNotExist:
             return True
         return False
 
     @classmethod
-    def get(cls, name: str):
+    def get(cls, space_id: str):
         try:
-            return cls.objects.get(name__iexact=name.lower())
+            return cls.objects.get(space_id__iexact=space_id.lower())
         except cls.DoesNotExist:
             raise SpaceError.NOT_FOUND
 
     @classmethod
-    def create(cls, name: str, access: str, user):
-        if not cls.is_name_unique(name):
-            raise SpaceError.NAME_EXIST
+    def create(cls, space_id: str, access: str, start_date, user):
+        from Milestone.models import Milestone
+        if not cls.is_space_id_unique(space_id):
+            raise SpaceError.ID_EXIST
 
         try:
             with transaction.atomic():
                 space = cls.objects.create(
-                    name=name,
+                    space_id=space_id,
                     rename_card=0,
                     access=access,
                 )
@@ -107,34 +116,26 @@ class Space(models.Model):
                     cover=None,
                     res_id=Album.generate_res_id(),
                 )
+                milestone = Milestone.create(
+                    space=space,
+                    name='星球成立日',
+                    start_date=start_date
+                )
+                space.set_default_milestone(milestone)
         except Exception as err:
-            raise SpaceError.CREATE(name, debug_message=err)
+            raise SpaceError.CREATE(space_id, debug_message=err)
         return space
 
-    def rename(self, name: str):
+    def rename(self, space_id: str):
         if self.rename_card < 1:
             raise SpaceError.REQUIRE_RENAME_CARD
 
-        if not self.is_name_unique(name):
-            raise SpaceError.NAME_EXIST
+        if not self.is_space_id_unique(space_id):
+            raise SpaceError.ID_EXIST
 
-        self.name = name
+        self.space_id = space_id
         self.rename_card -= 1
         self.save()
-
-    def invite(self, users):
-        try:
-            with transaction.atomic():
-                for user in users:
-                    self.spaceman_set.create(
-                        user=user,
-                        avatar=None,
-                        name=user.nickname,
-                        is_owner=False,
-                        accept_invite=False,
-                    )
-        except Exception as err:
-            raise SpaceError.INVITE(debug_message=err)
 
     def remove_man(self, users):
         try:
@@ -148,12 +149,11 @@ class Space(models.Model):
         if self.spaceman_set.get(is_owner=True).user != user:
             raise SpaceError.NOT_OWNER
 
-    def is_owner(self, user):
+    def member_checker(self, user):
         try:
-            self.owner_checker(user)
-            return True
-        except E:
-            return False
+            self.spaceman_set.get(user=user)
+        except Exception:
+            raise SpaceError.NOT_MEMBER
 
     def get_man(self, user):
         try:
@@ -163,6 +163,10 @@ class Space(models.Model):
 
     def get_album(self):
         return self.album_set.get(parent=None)
+
+    def set_default_milestone(self, milestone):
+        self.default_milestone = milestone
+        self.save()
 
     def _readable_create_time(self):
         return self.create_time.timestamp()
@@ -174,7 +178,7 @@ class Space(models.Model):
         return self.get_album().res_id
 
     def d(self):
-        return self.dictor('name', 'access', 'owner', 'root_album')
+        return self.dictify('name', 'access', 'owner', 'root_album')
 
     def d_member(self):
         return self.spaceman_set.dict(SpaceMan.d_space)
@@ -221,7 +225,7 @@ class SpaceMan(models.Model):
         return space.get_man(user)
 
     def get_union(self):
-        return '-'.join([self.space.name, self.user.user_id])
+        return '-'.join([self.space.space_id, self.user.user_id])
 
     def set_avatar(self, image):
         if self.avatar:
@@ -267,9 +271,9 @@ class SpaceMan(models.Model):
 
 
 class SpaceP:
-    name, rename_card, access = Space.P('name', 'rename_card', 'access')
+    space_id, rename_card, access = Space.P('space_id', 'rename_card', 'access')
 
-    name_getter = name.clone().rename(
-        'name', yield_name='space', stay_origin=True).process(Space.get)
+    id_getter = space_id.clone().rename(
+        'space_id', yield_name='space', stay_origin=True).process(Space.get)
 
     spaceman_getter = P('space_user', yield_name='spaceman').process(SpaceMan.get_by_union)

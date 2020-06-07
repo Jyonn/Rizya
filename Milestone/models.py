@@ -44,9 +44,9 @@ class Milestone(models.Model):
             raise MilestoneError.NOT_FOUND
 
     @classmethod
-    def create(cls, name, start_date):
+    def create(cls, space, name, start_date):
         try:
-            return cls.objects.create(name=name, start_date=start_date)
+            return cls.objects.create(space=space, name=name, start_date=start_date)
         except Exception:
             raise MilestoneError.CREATE
 

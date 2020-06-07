@@ -62,3 +62,22 @@ class Auth:
             cls._extract_user(r)
             return func(r, *args, **kwargs)
         return wrapper
+
+    @classmethod
+    def require_owner(cls, func):
+        @wraps(func)
+        def wrapper(r, *args, **kwargs):
+            cls._extract_user(r)
+            r.d.space.owner_checker(r.user)
+            return func(r, *args, **kwargs)
+        return wrapper
+
+    @classmethod
+    def require_member(cls, func):
+        @wraps(func)
+        def wrapper(r, *args, **kwargs):
+            cls._extract_user(r)
+            r.d.space.member_checker(r.user)
+            return func(r, *args, **kwargs)
+
+        return wrapper

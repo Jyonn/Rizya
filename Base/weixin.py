@@ -33,7 +33,6 @@ class Weixin:
         url = Weixin.CODE2SESSION_URL % (WX_APP_ID, WX_APP_SECRET, code)
 
         data = requests.get(url).json()
-        print(data)
 
         if 'openid' not in data:
             raise WeixinError.JS_CODE
