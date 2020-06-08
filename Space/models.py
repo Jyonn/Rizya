@@ -13,7 +13,7 @@ from User.models import User
 
 @E.register(id_processor=E.idp_cls_prefix())
 class SpaceError:
-    INVALID_ID_SIDE = E("星球ID首尾字符只能是字母")
+    INVALID_ID_SIDE = E("星球ID首尾字符只能是字母或数字")
     INVALID_ID = E("星球ID只能包含字母数字和中下划线")
     ID_EXIST = E("星球ID已存在")
     CREATE = E("创建星球{0}失败")
@@ -81,9 +81,9 @@ class Space(models.Model):
 
     @staticmethod
     def _valid_space_id(space_id):
-        if space_id[0] not in string.ascii_lowercase + string.ascii_uppercase:
+        if space_id[0] not in string.ascii_lowercase + string.ascii_uppercase + string.digits:
             raise SpaceError.INVALID_ID_SIDE
-        if space_id[-1] not in string.ascii_lowercase + string.ascii_uppercase:
+        if space_id[-1] not in string.ascii_lowercase + string.ascii_uppercase + string.digits:
             raise SpaceError.INVALID_ID_SIDE
         valid_chars = '^[A-Za-z0-9_-]+$'
         if re.match(valid_chars, space_id) is None:
