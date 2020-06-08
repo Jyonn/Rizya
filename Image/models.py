@@ -216,12 +216,6 @@ class Image(Resource):
             color=self.color_average,
         )
 
-    def d_avatar(self):
-        return dict(
-            source=self.get_source(auto_rotate=True, resize=(200, 200)),
-            color=self.color_average,
-        )
-
     def d_base(self):
         return self.dictify('source')
 

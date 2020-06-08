@@ -294,8 +294,8 @@ class SpaceMan(models.Model):
 
     def _readable_avatar(self):
         if self.avatar:
-            return self.avatar.d_avatar()
-        return None
+            return self.avatar.get_source(auto_rotate=True, resize=(200, 200)),
+        return self.user.avatar
 
     def d_space(self):
         return self.dictify('user', 'avatar', 'name', 'is_owner')
