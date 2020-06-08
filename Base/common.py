@@ -17,7 +17,9 @@ WX_APP_SECRET = Config.get_value_by_key(CI.WX_APP_SECRET)
 SECRET_KEY = Config.get_value_by_key(CI.PROJECT_SECRET_KEY)
 JWT_ENCODE_ALGO = Config.get_value_by_key(CI.JWT_ENCODE_ALGO)
 HOST = Config.get_value_by_key(CI.HOST)
-DEFAULT_SPACE_COVER = 'rizya/default-space-cover.jpg'
+
+DEFAULT_SPACE_COVER = 'https://image.6-79.cn/rizya/default-space-cover.jpg?' \
+                      'imageMogr2/auto-orient/thumbnail/600x/blur/1x0/quality/75'
 
 DEV_MODE = True
 
