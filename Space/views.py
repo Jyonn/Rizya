@@ -22,7 +22,7 @@ class SpaceView(View):
     @Auth.require_login
     def post(r):
         """新建空间"""
-        return Space.create(**r.d.dict(), user=r.user).d()
+        return Space.create(**r.d.dict(), user=r.user).d_create()
 
 
 class NameView(View):

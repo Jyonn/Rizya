@@ -237,6 +237,12 @@ class Space(models.Model):
     def d(self):
         return self.dictify('name', 'access', 'owner', 'root_album', 'space_id', 'cover', 'age')
 
+    def d_create(self):
+        return dict(
+            space_id=self.space_id,
+            cover_token=self.get_cover_token(),
+        )
+
     def d_base(self):
         return self.dictify('name', 'access', 'space_id', 'cover', 'members', 'age')
 
