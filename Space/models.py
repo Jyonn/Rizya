@@ -145,7 +145,6 @@ class Space(models.Model):
                     avatar=None,
                     name=user.nickname,
                     is_owner=True,
-                    accept_invite=True,
                 )
                 space.album_set.create(
                     parent=None,
