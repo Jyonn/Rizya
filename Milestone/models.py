@@ -59,10 +59,13 @@ class Milestone(models.Model):
         self.start_date = start_date
         self.save()
 
-    def _readable_duration(self):
+    def get_duration(self):
         start_date = self.start_date  # type: datetime.date
         crt_date = datetime.date.today()
         return (crt_date - start_date).days
+
+    def _readable_duration(self):
+        return self.get_duration()
 
     def _readable_start_date(self):
         start_date = self.start_date  # type: datetime.date

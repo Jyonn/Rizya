@@ -231,11 +231,14 @@ class Space(models.Model):
             return self.spaceman_set.dict(SpaceMan.get_avatar)
         return self.spaceman_set.dict(SpaceMan.d_space)
 
+    def _readable_age(self):
+        return self.default_milestone.get_duration()
+
     def d(self):
-        return self.dictify('name', 'access', 'owner', 'root_album', 'space_id', 'cover')
+        return self.dictify('name', 'access', 'owner', 'root_album', 'space_id', 'cover', 'age')
 
     def d_base(self):
-        return self.dictify('name', 'access', 'space_id', 'cover', 'members')
+        return self.dictify('name', 'access', 'space_id', 'cover', 'members', 'age')
 
     def d_member(self):
         return self._readable_members(only_avatar=False)
