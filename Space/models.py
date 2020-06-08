@@ -225,7 +225,7 @@ class Space(models.Model):
     def _readable_cover(self):
         if self.cover:
             return self.cover.d_space()
-        return qn_res_manager.get_image(key=DEFAULT_SPACE_COVER)
+        return dict(source=qn_res_manager.get_image(key=DEFAULT_SPACE_COVER))
 
     def _readable_members(self, only_avatar=True):
         if only_avatar:
