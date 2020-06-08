@@ -197,7 +197,7 @@ class Space(models.Model):
     def get_cover_token(self):
         return Image.get_token(
             action=ImageUploadAction.SPACE,
-            space_user=self.space_id,
+            space_id=self.space_id,
         )
 
     def set_cover(self, image):
