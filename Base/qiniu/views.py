@@ -14,10 +14,10 @@ class QiniuImageView(View):
     @staticmethod
     @Analyse.r(b=[
         'key', 'action', 'mime_type', 'color_average', 'image_info',
-        AlbumP.id_getter.clone().default(),
-        SpaceP.spaceman_getter.clone().default(),
-        MilestoneP.id_getter.clone().default(),
-        SpaceP.space_getter.clone().default(),
+        AlbumP.id_getter.clone().default().null(),
+        SpaceP.spaceman_getter.clone().default().null(),
+        MilestoneP.id_getter.clone().default().null(),
+        SpaceP.space_getter.clone().default().null(),
     ])
     def post(r):
         qn_res_manager.auth_callback(r)
