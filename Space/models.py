@@ -7,6 +7,8 @@ from django.utils.crypto import get_random_string
 from smartify import P
 
 from Album.models import Album
+from Base.common import DEFAULT_SPACE_COVER
+from Base.qiniu.qn import qn_res_manager
 from Image.models import Image, ImageUploadAction
 from User.models import User
 
@@ -223,6 +225,7 @@ class Space(models.Model):
     def _readable_cover(self):
         if self.cover:
             return self.cover.d_space()
+        return qn_res_manager.get_image(key=DEFAULT_SPACE_COVER)
 
     def _readable_members(self, only_avatar=True):
         if only_avatar:
