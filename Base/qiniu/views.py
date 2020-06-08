@@ -17,6 +17,7 @@ class QiniuImageView(View):
         AlbumP.id_getter.clone().default(),
         SpaceP.spaceman_getter.clone().default(),
         MilestoneP.id_getter.clone().default(),
+        SpaceP.space_getter.clone().default(),
     ])
     def post(r):
         qn_res_manager.auth_callback(r)
@@ -48,6 +49,11 @@ class QiniuImageView(View):
         if action == ImageUploadAction.SPACEMAN:
             spaceman = r.d.spaceman
             spaceman.set_avatar(image)
+            return image.d_base()
+
+        elif action == ImageUploadAction.SPACE:
+            space = r.d.space
+            space.set_cover(image)
             return image.d_base()
 
         elif action == ImageUploadAction.MILESTONE:

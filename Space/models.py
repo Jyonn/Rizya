@@ -72,6 +72,13 @@ class Space(models.Model):
         related_name='default_milestone'
     )
 
+    cover = models.ForeignKey(
+        'Image.Image',
+        default=None,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
     @staticmethod
     def _valid_space_id(space_id):
         if space_id[0] not in string.ascii_lowercase + string.ascii_uppercase:
@@ -92,6 +99,8 @@ class Space(models.Model):
             except E:
                 pass
 
+    # checkers
+
     @classmethod
     def id_unique_checker(cls, space_id: str):
         try:
@@ -99,6 +108,18 @@ class Space(models.Model):
         except cls.DoesNotExist:
             return
         raise SpaceError.ID_EXIST
+
+    def owner_checker(self, user):
+        if self.spaceman_set.get(is_owner=True).user != user:
+            raise SpaceError.NOT_OWNER
+
+    def member_checker(self, user):
+        try:
+            self.spaceman_set.get(user=user)
+        except Exception:
+            raise SpaceError.NOT_MEMBER
+
+    # classmethods
 
     @classmethod
     def get(cls, space_id: str):
@@ -155,29 +176,35 @@ class Space(models.Model):
         self.rename_card -= 1
         self.save()
 
-    def remove_man(self, users):
-        try:
-            with transaction.atomic():
-                for user in users:
-                    self.get_man(user).remove()
-        except Exception as err:
-            raise SpaceError.REMOVE_MAN(debug_message=err)
+    # member
 
-    def owner_checker(self, user):
-        if self.spaceman_set.get(is_owner=True).user != user:
-            raise SpaceError.NOT_OWNER
-
-    def member_checker(self, user):
-        try:
-            self.spaceman_set.get(user=user)
-        except Exception:
-            raise SpaceError.NOT_MEMBER
-
-    def get_man(self, user):
+    def get_member(self, user):
         try:
             return self.spaceman_set.get(user=user)
         except Exception:
             raise SpaceError.MEMBER_NOT_FOUND
+
+    def remove_member(self, users):
+        try:
+            with transaction.atomic():
+                for user in users:
+                    self.get_member(user).remove()
+        except Exception as err:
+            raise SpaceError.REMOVE_MAN(debug_message=err)
+
+    # cover
+
+    def get_cover_token(self):
+        return Image.get_token(
+            action=ImageUploadAction.SPACE,
+            space_user=self.space_id,
+        )
+
+    def set_cover(self, image):
+        if self.cover:
+            self.cover.remove()
+        self.cover = image
+        self.save()
 
     def get_album(self):
         return self.album_set.get(parent=None)
@@ -240,16 +267,24 @@ class SpaceMan(models.Model):
         space_name, user_id = space_user_union.rsplit('-', 1)
         space = Space.get(space_name)
         user = User.get(user_id)
-        return space.get_man(user)
+        return space.get_member(user)
 
     def get_union(self):
         return '-'.join([self.space.space_id, self.user.user_id])
+
+    # 星球居民头像
 
     def set_avatar(self, image):
         if self.avatar:
             self.avatar.remove()
         self.avatar = image
         self.save()
+
+    def get_avatar_token(self):
+        return Image.get_token(
+            action=ImageUploadAction.SPACEMAN,
+            space_user=self.get_union(),
+        )
 
     def _readable_user(self):
         return self.user.d()
@@ -281,17 +316,11 @@ class SpaceMan(models.Model):
     def remove(self):
         self.delete()
 
-    def get_image_token(self):
-        return Image.get_token(
-            action=ImageUploadAction.SPACEMAN,
-            space_user=self.get_union(),
-        )
-
 
 class SpaceP:
     space_id, name, rename_card, access = Space.P('space_id', 'name', 'rename_card', 'access')
 
-    id_getter = space_id.clone().rename(
+    space_getter = space_id.clone().rename(
         'space_id', yield_name='space', stay_origin=True).process(Space.get)
 
     spaceman_getter = P('space_user', yield_name='spaceman').process(SpaceMan.get_by_union)

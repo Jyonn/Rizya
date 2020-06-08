@@ -89,6 +89,7 @@ class ImageUploadAction:
     MILESTONE = 'milestone'
     ALBUM = 'album'
     SPACEMAN = 'spaceman'
+    SPACE = 'space'
 
 
 class Image(Resource):

@@ -68,6 +68,7 @@ class Auth:
         @wraps(func)
         def wrapper(r, *args, **kwargs):
             cls._extract_user(r)
+            r.spaceman = r.d.space.get_member(r.user)
             r.d.space.owner_checker(r.user)
             return func(r, *args, **kwargs)
         return wrapper
@@ -77,7 +78,7 @@ class Auth:
         @wraps(func)
         def wrapper(r, *args, **kwargs):
             cls._extract_user(r)
-            r.d.space.member_checker(r.user)
+            r.spaceman = r.d.space.get_member(r.user)
             return func(r, *args, **kwargs)
 
         return wrapper

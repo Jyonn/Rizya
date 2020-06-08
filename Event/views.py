@@ -6,7 +6,7 @@ from Event.models import EventType, EventTypeP, Event, EventP
 from Space.models import SpaceP
 
 
-space_getter = SpaceP.id_getter.clone().rename('space', stay_origin=True)
+space_getter = SpaceP.space_getter.clone().rename('space', stay_origin=True)
 
 
 class EventTypeView(View):
