@@ -226,11 +226,19 @@ class Space(models.Model):
         if self.cover:
             return self.cover.d_space()
 
+    def _readable_members(self, only_avatar=True):
+        if only_avatar:
+            return self.spaceman_set.dict(SpaceMan.get_avatar)
+        return self.spaceman_set.dict(SpaceMan.d_space)
+
     def d(self):
         return self.dictify('name', 'access', 'owner', 'root_album', 'space_id', 'cover')
 
+    def d_base(self):
+        return self.dictify('name', 'access', 'space_id', 'cover', 'members')
+
     def d_member(self):
-        return self.spaceman_set.dict(SpaceMan.d_space)
+        return self._readable_members(only_avatar=False)
 
 
 class SpaceMan(models.Model):
@@ -286,6 +294,11 @@ class SpaceMan(models.Model):
             space_user=self.get_union(),
         )
 
+    def get_avatar(self):
+        if self.avatar:
+            return self.avatar.get_source(auto_rotate=True, resize=(200, 200))
+        return self.user.avatar
+
     def _readable_user(self):
         return self.user.d()
 
@@ -293,15 +306,16 @@ class SpaceMan(models.Model):
         return self.space.d()
 
     def _readable_avatar(self):
-        if self.avatar:
-            return self.avatar.get_source(auto_rotate=True, resize=(200, 200)),
-        return self.user.avatar
+        return self.get_avatar()
 
     def d_space(self):
         return self.dictify('user', 'avatar', 'name', 'is_owner')
 
     def d_user(self):
         return self.dictify('avatar', 'name', 'is_owner', 'space')
+
+    def d_user_base(self):
+        return self.space.d_base()
 
     def remove(self):
         self.delete()

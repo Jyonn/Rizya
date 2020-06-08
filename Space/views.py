@@ -15,7 +15,7 @@ class SpaceView(View):
     def get(r):
         """获取我的空间"""
         user = r.user  # type: User
-        return user.spaceman_set.dict(SpaceMan.d_user)
+        return user.spaceman_set.dict(SpaceMan.d_user_base)
 
     @staticmethod
     @Analyse.r(b=[SpaceP.name, SpaceP.access, MilestoneP.start_date])
