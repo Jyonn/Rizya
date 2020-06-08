@@ -222,8 +222,12 @@ class Space(models.Model):
     def _readable_root_album(self):
         return self.get_album().res_id
 
+    def _readable_cover(self):
+        if self.cover:
+            return self.cover.d_base()
+
     def d(self):
-        return self.dictify('name', 'access', 'owner', 'root_album')
+        return self.dictify('name', 'access', 'owner', 'root_album', 'space_id', 'cover')
 
     def d_member(self):
         return self.spaceman_set.dict(SpaceMan.d_space)
