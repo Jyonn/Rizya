@@ -17,7 +17,6 @@ class SpaceError:
     INVALID_ID = E("星球ID只能包含字母数字和中下划线")
     ID_EXIST = E("星球ID已存在")
     CREATE = E("创建星球{0}失败")
-    INVITE = E("邀请居民失败")
     REMOVE_MAN = E("移除居民失败")
     NOT_FOUND = E("空间不存在")
     REQUIRE_RENAME_CARD = E("空间改名卡不足")
