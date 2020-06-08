@@ -43,21 +43,21 @@ class MemberView(View):
         """获取空间用户信息"""
         return r.d.space.spaceman_set.dict(SpaceMan.d_space)
 
-    @staticmethod
-    @Analyse.r(a=[SpaceP.space_getter], b=[UserP.users_getter])
-    @Auth.require_owner
-    def put(r):
-        """空间新增用户（邀请）"""
-        space = r.d.space
-        space.invite(r.d.users)
+    # @staticmethod
+    # @Analyse.r(a=[SpaceP.space_getter], b=[UserP.users_getter])
+    # @Auth.require_owner
+    # def put(r):
+    #     """空间新增用户（邀请）"""
+    #     space = r.d.space
+    #     space.invite(r.d.users)
 
-    @staticmethod
-    @Analyse.r(a=[SpaceP.space_getter], b=['accept'])
-    @Auth.require_login
-    def post(r):
-        """接受或拒绝邀请"""
-        space_man = r.d.space.get_member(r.user)  # type: SpaceMan
-        space_man.accept(r.d.accept)
+    # @staticmethod
+    # @Analyse.r(a=[SpaceP.space_getter], b=['accept'])
+    # @Auth.require_login
+    # def post(r):
+    #     """接受或拒绝邀请"""
+    #     space_man = r.d.space.get_member(r.user)  # type: SpaceMan
+    #     space_man.accept(r.d.accept)
 
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter], b=[UserP.users_getter])

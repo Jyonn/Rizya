@@ -224,7 +224,7 @@ class Space(models.Model):
 
     def _readable_cover(self):
         if self.cover:
-            return self.cover.d_base()
+            return self.cover.d_space()
 
     def d(self):
         return self.dictify('name', 'access', 'owner', 'root_album', 'space_id', 'cover')
@@ -262,10 +262,6 @@ class SpaceMan(models.Model):
         default=False,
     )
 
-    accept_invite = models.BooleanField(
-        default=True,
-    )
-
     @classmethod
     def get_by_union(cls, space_user_union: str):
         space_name, user_id = space_user_union.rsplit('-', 1)
@@ -298,24 +294,14 @@ class SpaceMan(models.Model):
 
     def _readable_avatar(self):
         if self.avatar:
-            return self.avatar.get_sources()
+            return self.avatar.d_avatar()
         return None
 
     def d_space(self):
-        return self.dictify('user', 'avatar', 'name', 'is_owner', 'accept_invite')
+        return self.dictify('user', 'avatar', 'name', 'is_owner')
 
     def d_user(self):
-        return self.dictify('avatar', 'name', 'is_owner', 'accept_invite', 'space')
-
-    def accept(self, accept):
-        if self.accept_invite:
-            return
-
-        if accept:
-            self.accept_invite = True
-            self.save()
-        else:
-            self.remove()
+        return self.dictify('avatar', 'name', 'is_owner', 'space')
 
     def remove(self):
         self.delete()
