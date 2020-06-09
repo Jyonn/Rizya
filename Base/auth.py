@@ -64,7 +64,7 @@ class Auth:
         return wrapper
 
     @classmethod
-    def require_owner(cls, func):
+    def require_space_owner(cls, func):
         @wraps(func)
         def wrapper(r, *args, **kwargs):
             cls._extract_user(r)
@@ -74,11 +74,21 @@ class Auth:
         return wrapper
 
     @classmethod
-    def require_member(cls, func):
+    def require_space_member(cls, func):
         @wraps(func)
         def wrapper(r, *args, **kwargs):
             cls._extract_user(r)
             r.spaceman = r.d.space.get_member(r.user)
+            return func(r, *args, **kwargs)
+
+        return wrapper
+
+    @classmethod
+    def require_milestone_member(cls, func):
+        @wraps(func)
+        def wrapper(r, *args, **kwargs):
+            cls._extract_user(r)
+            r.spaceman = r.d.milestone.space.get_member(r.user)
             return func(r, *args, **kwargs)
 
         return wrapper

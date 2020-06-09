@@ -35,12 +35,14 @@ class EventTypeIDView(View):
     def put(r):
         """修改事件组"""
         r.d.event_type.rename(**r.d.dict('emoji', 'name'))
+        return 0
 
     @staticmethod
     @Analyse.r(a=[EventTypeP.etid_getter])
     def delete(r):
         """删除事件组"""
         r.d.event_type.delete()
+        return 0
 
 
 class EventView(View):
@@ -70,12 +72,14 @@ class EventIDView(View):
     def put(r):
         """修改事件"""
         r.d.event.update(**r.d.dict('name', 'duration', 'start_date'))
+        return 0
 
     @staticmethod
     @Analyse.r(a=[EventP.id_getter])
     def delete(r):
         """删除事件"""
         r.d.event.delete()
+        return 0
 
 
 class EventAlbumView(View):
@@ -85,3 +89,4 @@ class EventAlbumView(View):
     def put(r):
         """绑定相册"""
         r.d.event.bind_album(r.d.album)
+        return 0

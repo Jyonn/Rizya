@@ -36,6 +36,10 @@ class Milestone(models.Model):
         default=None,
     )
 
+    def space_checker(self, space):
+        if self.space != space:
+            raise MilestoneError.NOT_BELONG
+
     @classmethod
     def get(cls, mid):
         try:
@@ -50,14 +54,15 @@ class Milestone(models.Model):
         except Exception:
             raise MilestoneError.CREATE
 
-    def assert_belongs_to(self, space):
-        if self.space != space:
-            raise MilestoneError.NOT_BELONG
-
     def update(self, name, start_date):
         self.name = name
         self.start_date = start_date
         self.save()
+
+    def delete(self, *args, **kwargs):
+        if self.cover:
+            self.cover.delete()
+        super(Milestone, self).delete(*args, **kwargs)
 
     def get_duration(self):
         start_date = self.start_date  # type: datetime.date
@@ -81,6 +86,12 @@ class Milestone(models.Model):
 
     def d(self):
         return self.dictify('pk->mid', 'name', 'start_date', 'duration', 'cover')
+
+    def d_create(self):
+        return dict(
+            mid=self.pk,
+            cover_token=self.get_image_token(),
+        )
 
     def get_image_token(self):
         return Image.get_token(

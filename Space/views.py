@@ -25,7 +25,7 @@ class SpaceView(View):
         return Space.create(**r.d.dict(), user=r.user).d_create()
 
 
-class NameView(View):
+class IDView(View):
     """/space/:space_id"""
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter])
@@ -35,9 +35,10 @@ class NameView(View):
 
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter])
-    @Auth.require_owner
+    @Auth.require_space_owner
     def delete(r):
         r.d.space.delete()
+        return 0
 
 
 class MemberView(View):
@@ -49,44 +50,20 @@ class MemberView(View):
         """获取空间用户信息"""
         return r.d.space.spaceman_set.dict(SpaceMan.d_space)
 
-    # @staticmethod
-    # @Analyse.r(a=[SpaceP.space_getter], b=[UserP.users_getter])
-    # @Auth.require_owner
-    # def put(r):
-    #     """空间新增用户（邀请）"""
-    #     space = r.d.space
-    #     space.invite(r.d.users)
-
-    # @staticmethod
-    # @Analyse.r(a=[SpaceP.space_getter], b=['accept'])
-    # @Auth.require_login
-    # def post(r):
-    #     """接受或拒绝邀请"""
-    #     space_man = r.d.space.get_member(r.user)  # type: SpaceMan
-    #     space_man.accept(r.d.accept)
-
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter], b=[UserP.users_getter])
-    @Auth.require_owner
+    @Auth.require_space_owner
     def patch(r):
         """空间删除用户"""
         space = r.d.space
         space.remove_member(r.d.users)
+        return 0
 
 
 class MemberAvatarView(View):
     """/space/member/avatar"""
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter])
-    @Auth.require_member
+    @Auth.require_space_member
     def get(r):
         return r.spaceman.get_avatar_token()
-
-
-class CoverView(View):
-    """/space/:space_id/cover"""
-    @staticmethod
-    @Analyse.r(a=[SpaceP.space_getter])
-    @Auth.require_member
-    def get(r):
-        return r.d.space.get_cover_token()

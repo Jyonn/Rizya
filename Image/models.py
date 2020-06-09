@@ -203,7 +203,7 @@ class Image(Resource):
 
     def delete(self, *args, **kwargs):
         qn_res_manager.delete_res(self.key)
-        super().delete(*args, **kwargs)
+        super(Image, self).delete(*args, **kwargs)
 
     def _readable_source(self):
         return self.get_sources()

@@ -17,7 +17,7 @@ from Space.models import SpaceP, Space
 #         return album.d()
 
 
-class AlbumIDView(View):
+class IDView(View):
     @staticmethod
     @Analyse.r(a=[AlbumP.id_getter])
     def get(r):
@@ -35,16 +35,17 @@ class AlbumIDView(View):
     # def put(r):
 
 
-class AlbumCoverView(View):
+class CoverView(View):
     @staticmethod
     @Analyse.r(a=[AlbumP.id_getter], b=[ImageP.id_getter])
     def put(r):
         album = r.d.album  # type: Album
         image = r.d.image  # type: Image
         album.set_cover(image)
+        return 0
 
 
-class AlbumImageTokenView(View):
+class ImageTokenView(View):
     @staticmethod
     @Analyse.r(
         a=[AlbumP.id_getter],

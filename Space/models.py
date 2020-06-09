@@ -201,12 +201,6 @@ class Space(models.Model):
         #     space_id=self.space_id,
         # )
 
-    # def set_cover(self, image):
-    #     if self.cover:
-    #         self.cover.delete()
-    #     self.cover = image
-    #     self.save()
-
     def get_album(self):
         return self.album_set.get(parent=None)
 
