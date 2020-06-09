@@ -59,6 +59,11 @@ class Album(Resource):
         except Exception:
             raise AlbumError.CREATE
 
+    def delete(self, *args, **kwargs):
+        if self.cover:
+            self.cover.delete()
+        super().delete(*args, **kwargs)
+
     def set_cover(self, image):
         self.cover = image
         self.save()
@@ -71,8 +76,8 @@ class Album(Resource):
     def d_layer(self):
         d_ = self.d()
         d_.update(dict(
-            albums=Album.objects.filter(parent=self).dict(Album.d),
-            images=Image.objects.filter(album=self).dict(Image.d),
+            albums=self.album_set.dict(Album.d),
+            images=self.image_set.dict(Image.d),
         ))
         return d_
 

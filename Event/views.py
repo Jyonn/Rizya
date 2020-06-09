@@ -40,7 +40,7 @@ class EventTypeIDView(View):
     @Analyse.r(a=[EventTypeP.etid_getter])
     def delete(r):
         """删除事件组"""
-        r.d.event_type.remove()
+        r.d.event_type.delete()
 
 
 class EventView(View):
@@ -75,7 +75,7 @@ class EventIDView(View):
     @Analyse.r(a=[EventP.id_getter])
     def delete(r):
         """删除事件"""
-        r.d.event.remove()
+        r.d.event.delete()
 
 
 class EventAlbumView(View):

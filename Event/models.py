@@ -107,10 +107,14 @@ class EventType(models.Model):
             raise EventError.CREATE(debug_message=err)
 
     def d(self):
-        return self.dictor('name', 'emoji', 'etid')
+        return self.dictify('name', 'emoji', 'etid')
 
-    def remove(self):
-        self.delete()
+    def delete(self, *args, **kwargs):
+        if self.current_cover:
+            self.current_cover.delete()
+        if self.default_cover:
+            self.default_cover.delete()
+        super(EventType, self).delete(*args, **kwargs)
 
 
 class EventTypeP:
@@ -196,9 +200,6 @@ class Event(models.Model):
 
     def d_et(self):
         return self.dictify('start_date', 'duration', 'name', 'album_id', 'event_id')
-
-    def remove(self):
-        self.delete()
 
 
 class EventP:

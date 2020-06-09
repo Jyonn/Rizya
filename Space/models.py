@@ -165,6 +165,10 @@ class Space(models.Model):
             raise SpaceError.CREATE(name, debug_message=err)
         return space
 
+    def delete(self, *args, **kwargs):
+        self.cover.delete()
+        super(Space, self).delete(*args, **kwargs)
+
     def rename(self, space_id: str):
         if self.rename_card < 1:
             raise SpaceError.REQUIRE_RENAME_CARD
@@ -187,7 +191,7 @@ class Space(models.Model):
         try:
             with transaction.atomic():
                 for user in users:
-                    self.get_member(user).remove()
+                    self.get_member(user).delete()
         except Exception as err:
             raise SpaceError.REMOVE_MAN(debug_message=err)
 
@@ -201,7 +205,7 @@ class Space(models.Model):
 
     def set_cover(self, image):
         if self.cover:
-            self.cover.remove()
+            self.cover.delete()
         self.cover = image
         self.save()
 
@@ -289,11 +293,16 @@ class SpaceMan(models.Model):
     def get_union(self):
         return '-'.join([self.space.space_id, self.user.user_id])
 
+    def delete(self, *args, **kwargs):
+        if self.avatar:
+            self.avatar.delete()
+        super(SpaceMan, self).delete(*args, **kwargs)
+
     # 星球居民头像
 
     def set_avatar(self, image):
         if self.avatar:
-            self.avatar.remove()
+            self.avatar.delete()
         self.avatar = image
         self.save()
 
@@ -325,9 +334,6 @@ class SpaceMan(models.Model):
 
     def d_user_base(self):
         return self.space.d_base()
-
-    def remove(self):
-        self.delete()
 
 
 class SpaceP:

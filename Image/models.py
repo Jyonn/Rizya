@@ -195,9 +195,9 @@ class Image(Resource):
             rotate=self.get_source(auto_rotate=True, resize=None)
         )
 
-    def remove(self):
+    def delete(self, *args, **kwargs):
         qn_res_manager.delete_res(self.key)
-        self.delete()
+        super().delete(*args, **kwargs)
 
     def _readable_source(self):
         return self.get_sources()
