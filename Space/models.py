@@ -173,7 +173,6 @@ class Space(models.Model):
     def rename(self, space_id: str):
         if self.rename_card < 1:
             raise SpaceError.REQUIRE_RENAME_CARD
-
         self.id_unique_checker(space_id)
 
         self.space_id = space_id
@@ -229,7 +228,7 @@ class Space(models.Model):
     def _readable_cover(self):
         if self.cover:
             return self.cover.d_space()
-        return dict(source=DEFAULT_SPACE_COVER)
+        # return dict(source=DEFAULT_SPACE_COVER)
 
     def _readable_members(self, only_avatar=True):
         if only_avatar:
