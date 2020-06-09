@@ -71,12 +71,12 @@ class Space(models.Model):
         related_name='default_milestone'
     )
 
-    cover = models.ForeignKey(
-        'Image.Image',
-        default=None,
-        null=True,
-        on_delete=models.SET_NULL,
-    )
+    # cover = models.ForeignKey(
+    #     'Image.Image',
+    #     default=None,
+    #     null=True,
+    #     on_delete=models.SET_NULL,
+    # )
 
     @staticmethod
     def _valid_space_id(space_id):
@@ -197,16 +197,17 @@ class Space(models.Model):
     # cover
 
     def get_cover_token(self):
-        return Image.get_token(
-            action=ImageUploadAction.SPACE,
-            space_id=self.space_id,
-        )
+        return self.default_milestone.get_image_token()
+        # return Image.get_token(
+        #     action=ImageUploadAction.SPACE,
+        #     space_id=self.space_id,
+        # )
 
-    def set_cover(self, image):
-        if self.cover:
-            self.cover.delete()
-        self.cover = image
-        self.save()
+    # def set_cover(self, image):
+    #     if self.cover:
+    #         self.cover.delete()
+    #     self.cover = image
+    #     self.save()
 
     def get_album(self):
         return self.album_set.get(parent=None)
@@ -225,8 +226,10 @@ class Space(models.Model):
         return self.get_album().res_id
 
     def _readable_cover(self):
-        if self.cover:
-            return self.cover.d_space()
+        if self.default_milestone.cover:
+            return self.default_milestone.cover.d_space()
+        # if self.cover:
+        #     return self.cover.d_space()
         # return dict(source=DEFAULT_SPACE_COVER)
 
     def _readable_members(self, only_avatar=True):

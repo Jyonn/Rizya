@@ -51,11 +51,11 @@ class QiniuImageView(View):
             spaceman.set_avatar(image)
             return image.d_base()
 
-        elif action == ImageUploadAction.SPACE:
-            space = r.d.space
-            space.set_cover(image)
-            return image.d_base()
-
+        # elif action == ImageUploadAction.SPACE:
+        #     space = r.d.space
+        #     space.set_cover(image)
+        #     return image.d_base()
+        #
         elif action == ImageUploadAction.MILESTONE:
             milestone = r.d.milestone
             milestone.set_cover(image)
