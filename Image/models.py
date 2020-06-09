@@ -195,6 +195,12 @@ class Image(Resource):
             rotate=self.get_source(auto_rotate=True, resize=None)
         )
 
+    def get_tiny_source_with_color(self, resize=None):
+        return dict(
+            source=self.get_source(auto_rotate=True, resize=resize),
+            color=self.color_average,
+        )
+
     def delete(self, *args, **kwargs):
         qn_res_manager.delete_res(self.key)
         super().delete(*args, **kwargs)
@@ -211,10 +217,10 @@ class Image(Resource):
             'res_id->image_id', 'grid_position', 'orientation')
 
     def d_space(self):
-        return dict(
-            source=self.get_source(auto_rotate=True, resize=None),
-            color=self.color_average,
-        )
+        return self.get_tiny_source_with_color((400, None))
+
+    def d_milestone(self):
+        return self.get_tiny_source_with_color((200, None))
 
     def d_base(self):
         return self.dictify('source')

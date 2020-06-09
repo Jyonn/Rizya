@@ -75,8 +75,12 @@ class Milestone(models.Model):
             day=start_date.day
         )
 
+    def _readable_cover(self):
+        if self.cover:
+            return self.cover.d_milestone()
+
     def d(self):
-        return self.dictify('pk->mid', 'name', 'start_date', 'duration')
+        return self.dictify('pk->mid', 'name', 'start_date', 'duration', 'cover')
 
     def get_image_token(self):
         return Image.get_token(

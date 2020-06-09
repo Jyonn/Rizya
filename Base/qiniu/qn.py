@@ -86,14 +86,19 @@ class QnManager:
         if not verified:
             raise QNError.UNAUTH_CALLBACK
 
-    def get_image(self, key, expires=3600, auto_rotate=True, resize=None):
+    def get_image(self, key, expires=3600, auto_rotate=True, resize=None, quality=100):
         if auto_rotate:
             if resize:
                 if isinstance(resize, int):
                     resize = (resize, resize)
-                suffix = 'imageView2/1/w/%s/h/%s/interlace/1/q/100' % (resize[0], resize[1])
+                if not resize[0]:
+                    suffix = 'imageMogr2/auto-orient/thumbnail/x%s/blur/1x0/quality/%s' % (resize[1], quality)
+                elif not resize[1]:
+                    suffix = 'imageMogr2/auto-orient/thumbnail/%sx/blur/1x0/quality/%s' % (resize[0], quality)
+                else:
+                    suffix = 'imageView2/1/w/%s/h/%s/interlace/1/q/%s' % (resize[0], resize[1], quality)
             else:
-                suffix = 'imageView2/0/interlace/1/q/100'
+                suffix = 'imageView2/0/interlace/1/q/%s' % quality
             url = '%s/%s?%s' % (self.cdn_host, key, suffix)
         else:
             url = '%s/%s' % (self.cdn_host, key)

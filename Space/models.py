@@ -7,7 +7,6 @@ from django.utils.crypto import get_random_string
 from smartify import P
 
 from Album.models import Album
-from Base.common import DEFAULT_SPACE_COVER
 from Image.models import Image, ImageUploadAction
 from User.models import User
 
@@ -238,8 +237,13 @@ class Space(models.Model):
     def _readable_age(self):
         return self.default_milestone.get_duration()
 
+    def _readable_milestones(self):
+        from Milestone.models import Milestone
+        return self.milestone_set.dict(Milestone.d)
+
     def d(self):
-        return self.dictify('name', 'access', 'owner', 'root_album', 'space_id', 'cover', 'age')
+        return self.dictify('name', 'access', 'owner', 'root_album', 'space_id', 'cover', 'age',
+                            'milestones')
 
     def d_create(self):
         return dict(
