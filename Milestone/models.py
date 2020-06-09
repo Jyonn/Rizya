@@ -96,7 +96,7 @@ class Milestone(models.Model):
     def get_image_token(self):
         return Image.get_token(
             action=ImageUploadAction.MILESTONE,
-            milestone=self.pk
+            mid=self.pk
         )
 
     def set_cover(self, image: Image):
