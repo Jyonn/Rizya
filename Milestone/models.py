@@ -100,9 +100,9 @@ class Milestone(models.Model):
         )
 
     def set_cover(self, image: Image):
-        if self.avatar:
-            self.avatar.delete()
-        self.avatar = image
+        if self.cover:
+            self.cover.delete()
+        self.cover = image
         self.save()
 
 
