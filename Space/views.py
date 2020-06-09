@@ -33,6 +33,12 @@ class NameView(View):
         """获取空间信息"""
         return r.d.space.d()
 
+    @staticmethod
+    @Analyse.r(a=[SpaceP.space_getter])
+    @Auth.require_owner
+    def delete(r):
+        r.d.space.delete()
+
 
 class MemberView(View):
     """/space/members"""
