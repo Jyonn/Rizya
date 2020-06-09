@@ -217,10 +217,10 @@ class Image(Resource):
             'res_id->image_id', 'grid_position', 'orientation')
 
     def d_space(self):
-        return self.get_tiny_source_with_color((400, None))
+        return self.get_tiny_source_with_color((600, None))
 
     def d_milestone(self):
-        return self.get_tiny_source_with_color((200, None))
+        return self.get_tiny_source_with_color((400, None))
 
     def d_base(self):
         return self.dictify('source')
