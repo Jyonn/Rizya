@@ -166,7 +166,8 @@ class Space(models.Model):
         return space
 
     def delete(self, *args, **kwargs):
-        self.cover.delete()
+        if self.cover:
+            self.cover.delete()
         super(Space, self).delete(*args, **kwargs)
 
     def rename(self, space_id: str):
