@@ -165,8 +165,6 @@ class Space(models.Model):
         return space
 
     def delete(self, *args, **kwargs):
-        if self.cover:
-            self.cover.delete()
         super(Space, self).delete(*args, **kwargs)
 
     def rename(self, space_id: str):
@@ -245,8 +243,7 @@ class Space(models.Model):
         return self.milestone_set.dict(Milestone.d)
 
     def d(self):
-        return self.dictify('name', 'access', 'owner', 'root_album', 'space_id', 'cover', 'age',
-                            'milestones')
+        return self.dictify('name', 'access', 'owner', 'root_album', 'age', 'milestones')
 
     def d_create(self):
         return dict(
