@@ -196,10 +196,6 @@ class Space(models.Model):
 
     def get_cover_token(self):
         return self.default_milestone.get_image_token()
-        # return Image.get_token(
-        #     action=ImageUploadAction.SPACE,
-        #     space_id=self.space_id,
-        # )
 
     def get_album(self):
         return self.album_set.get(parent=None)
@@ -220,9 +216,6 @@ class Space(models.Model):
     def _readable_cover(self):
         if self.default_milestone.cover:
             return self.default_milestone.cover.d_space()
-        # if self.cover:
-        #     return self.cover.d_space()
-        # return dict(source=DEFAULT_SPACE_COVER)
 
     def _readable_members(self, only_avatar=True):
         if only_avatar:
@@ -241,7 +234,7 @@ class Space(models.Model):
 
     def d_create(self):
         return dict(
-            space_id=self.space_id,
+            space_dict=self.space_id,
             cover_token=self.get_cover_token(),
         )
 

@@ -7,4 +7,5 @@ urlpatterns = [
     path('space/', include('Space.urls')),
     path('album/', include('Album.urls')),
     path('event/', include('Event.urls')),
+    path('milestone/', include('Milestone.urls')),
 ]
