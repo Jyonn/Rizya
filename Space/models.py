@@ -305,8 +305,11 @@ class SpaceMan(models.Model):
 
     def get_avatar(self):
         if self.avatar:
-            return self.avatar.get_source(auto_rotate=True, resize=(200, 200))
-        return self.user.avatar
+            return self.avatar.d_avatar()
+        return dict(
+            source=self.user.avatar,
+            color='0xdddddd'
+        )
 
     def _readable_user(self):
         return self.user.d()

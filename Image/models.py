@@ -222,6 +222,9 @@ class Image(Resource):
     def d_milestone(self):
         return self.get_tiny_source_with_color((400, None))
 
+    def d_avatar(self):
+        return self.get_tiny_source_with_color((200, 200))
+
     def d_base(self):
         return self.dictify('source')
 
