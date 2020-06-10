@@ -229,7 +229,7 @@ class Space(models.Model):
         from Milestone.models import Milestone
         return self.milestone_set.dict(Milestone.d)
 
-    def d(self, user):
+    def d(self):
         return self.dictify('name', ('members', False), 'root_album', 'milestones')
 
     def d_create(self):
@@ -320,7 +320,7 @@ class SpaceMan(models.Model):
     def _readable_avatar(self):
         return self.get_avatar()
 
-    def id_space(self):
+    def d_space(self):
         return self.dictify('avatar', 'name', 'is_owner')
 
     def d_user(self):
