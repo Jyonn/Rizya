@@ -230,7 +230,7 @@ class Space(models.Model):
         return self.milestone_set.dict(Milestone.d)
 
     def d(self):
-        return self.dictify('name', 'access', 'owner', 'root_album', 'age', 'milestones')
+        return self.dictify('name', 'access', ('members', False), 'root_album', 'age', 'milestones')
 
     def d_create(self):
         return dict(
@@ -241,8 +241,8 @@ class Space(models.Model):
     def d_base(self):
         return self.dictify('name', 'access', 'space_id', 'cover', 'members', 'age')
 
-    def d_member(self):
-        return self._readable_members(only_avatar=False)
+    def d_member(self, only_avatar=True):
+        return self._readable_members(only_avatar=only_avatar)
 
 
 class SpaceMan(models.Model):
@@ -318,7 +318,7 @@ class SpaceMan(models.Model):
         return self.get_avatar()
 
     def d_space(self):
-        return self.dictify('user', 'avatar', 'name', 'is_owner')
+        return self.dictify('avatar', 'name', 'is_owner')
 
     def d_user(self):
         return self.dictify('avatar', 'name', 'is_owner', 'space')

@@ -5,6 +5,7 @@ from SmartDjango import E, Hc
 from Base.common import DEV_MODE
 from Base.crypto import Crypto
 from Base.jtoken import JWT
+from Space.models import SpaceMan
 from User.models import User
 
 
@@ -12,6 +13,11 @@ from User.models import User
 class AuthError:
     REQUIRE_LOGIN = E("需要登录", hc=Hc.Unauthorized)
     TOKEN_MISS_PARAM = E("认证口令缺少参数{0}", hc=Hc.Forbidden)
+
+
+class AuthType:
+    LOGIN = 'login'
+    INVITE = 'invite'
 
 
 class Auth:
@@ -29,13 +35,24 @@ class Auth:
             encrypt_session_key = session_key
         else:
             encrypt_session_key = Crypto.AES.encrypt(session_key)
-        token, _dict = JWT.encrypt(dict(
+        token, d = JWT.encrypt(dict(
+            type=AuthType.LOGIN,
             user_id=user.user_id,
             session_key=encrypt_session_key,
         ))
-        _dict['token'] = token
-        _dict['user'] = user.d()
-        return _dict
+        d['token'] = token
+        d['user'] = user.d()
+        return d
+
+    @staticmethod
+    def get_invite_token(spaceman: SpaceMan):
+        token, d = JWT.encrypt(dict(
+            type=AuthType.INVITE,
+            spaceman=spaceman.get_union(),
+        ))
+        d['token'] = token
+        d['spaceman'] = spaceman.d_user()
+        return d
 
     @classmethod
     def _extract_user(cls, r):
@@ -48,6 +65,9 @@ class Auth:
         session_key = dict_.get("session_key")
         if not session_key:
             raise AuthError.TOKEN_MISS_PARAM('session_key')
+        type_ = dict_.get('type')
+        if type_ != AuthType.LOGIN:
+            raise AuthError.TOKEN_MISS_PARAM('type')
 
         if DEV_MODE:
             r.session_key = session_key
