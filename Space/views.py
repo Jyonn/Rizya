@@ -29,9 +29,12 @@ class IDView(View):
     """/space/:space_id"""
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter])
+    @Auth.require_space_member
     def get(r):
         """获取空间信息"""
-        return r.d.space.d()
+        d = r.d.space.d()
+        d['user'] = r.spaceman.d_space()
+        return d
 
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter])
