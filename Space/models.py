@@ -223,7 +223,7 @@ class Space(models.Model):
         return self.milestone_set.dict(Milestone.d)
 
     def d(self):
-        return self.dictify('name', ('members', False), 'root_album', 'milestones')
+        return self.dictify('name', ('members', False), 'root_album', 'milestones', 'cover')
 
     def d_create(self):
         return dict(
