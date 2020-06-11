@@ -16,6 +16,14 @@ class MilestoneView(View):
 
 class IDView(View):
     @staticmethod
+    @Analyse.r(a=[MilestoneP.id_getter])
+    @Auth.require_milestone_member
+    def post(r):
+        milestone = r.d.milestone
+        milestone.space.set_default_milestone(milestone)
+        return 0
+
+    @staticmethod
     @Analyse.r(a=[MilestoneP.id_getter], b=[MilestoneP.name, MilestoneP.start_date])
     @Auth.require_milestone_member
     def put(r):

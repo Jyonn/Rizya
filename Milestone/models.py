@@ -74,11 +74,12 @@ class Milestone(models.Model):
 
     def _readable_start_date(self):
         start_date = self.start_date  # type: datetime.date
-        return dict(
-            year=start_date.year,
-            month=start_date.month,
-            day=start_date.day
-        )
+        return start_date.strftime('%Y-%m-%d')
+        # return dict(
+        #     year=start_date.year,
+        #     month=start_date.month,
+        #     day=start_date.day
+        # )
 
     def _readable_cover(self):
         if self.cover:
