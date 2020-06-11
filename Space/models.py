@@ -125,7 +125,7 @@ class Space(models.Model):
         try:
             self.spaceman_set.get(user=user)
         except Exception:
-            pass
+            return
         raise SpaceError.ALREADY_MEMBER
 
     # classmethods
