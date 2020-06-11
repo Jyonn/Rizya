@@ -94,7 +94,7 @@ class TicketView(View):
         space = r.d.spaceman.space
         space.not_member_checker(r.user)
         space.add_member(r.user)
-        return space.space_id
+        return 0
 
 
 class MemberAvatarView(View):
