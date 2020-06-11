@@ -66,15 +66,6 @@ class MemberView(View):
         r.spaceman.update(r.d.name)
         return 0
 
-    @staticmethod
-    @Analyse.r(a=[SpaceP.space_getter], b=[UserP.users_getter])
-    @Auth.require_space_owner
-    def patch(r):
-        """空间删除用户"""
-        space = r.d.space
-        space.remove_member(r.d.users)
-        return 0
-
 
 class MemberAvatarView(View):
     """/space/:space_id/member/avatar"""
@@ -83,3 +74,15 @@ class MemberAvatarView(View):
     @Auth.require_space_member
     def get(r):
         return r.spaceman.get_avatar_token()
+
+
+class MemberIDView(View):
+    """/space/:space_id/member/:user_id"""
+    @staticmethod
+    @Analyse.r(a=[SpaceP.space_getter, UserP.users_getter])
+    @Auth.require_space_owner
+    def delete(r):
+        space = r.d.space
+        space_man = space.get_member(r.d.user)  # type: SpaceMan
+        space_man.not_owner_checker()
+        space_man.delete()

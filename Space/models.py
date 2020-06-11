@@ -23,6 +23,7 @@ class SpaceError:
     NOT_OWNER = E("不是星球球主，无法操作")
     NOT_MEMBER = E("不是星球居民，无法操作")
     MEMBER_NOT_FOUND = E("居民不存在")
+    DELETE_OWNER = E("无法驱逐球主")
 
 
 class AccessChoices(models.CEnum):
@@ -184,14 +185,6 @@ class Space(models.Model):
         except Exception:
             raise SpaceError.MEMBER_NOT_FOUND
 
-    def remove_member(self, users):
-        try:
-            with transaction.atomic():
-                for user in users:
-                    self.get_member(user).delete()
-        except Exception as err:
-            raise SpaceError.REMOVE_MAN(debug_message=err)
-
     # cover
 
     def get_cover_token(self):
@@ -283,6 +276,10 @@ class SpaceMan(models.Model):
 
     def get_union(self):
         return '-'.join([self.space.space_id, self.user.user_id])
+
+    def not_owner_checker(self):
+        if self.is_owner:
+            raise SpaceError.DELETE_OWNER
 
     def delete(self, *args, **kwargs):
         if self.avatar:
