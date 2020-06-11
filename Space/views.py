@@ -3,7 +3,7 @@ from django.views import View
 
 from Base.auth import Auth
 from Milestone.models import MilestoneP
-from Space.models import SpaceP, Space, SpaceMan
+from Space.models import SpaceP, Space, SpaceMan, SpaceManP
 from User.models import UserP, User
 
 
@@ -35,6 +35,12 @@ class IDView(View):
         d = r.d.space.d()
         d['user'] = r.spaceman.d_space()
         return d
+
+    @staticmethod
+    @Analyse.r(a=[SpaceP.space_getter, SpaceP.name])
+    @Auth.require_space_owner
+    def put(r):
+        pass
 
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter])
@@ -70,3 +76,13 @@ class MemberAvatarView(View):
     @Auth.require_space_member
     def get(r):
         return r.spaceman.get_avatar_token()
+
+
+class MemberNameView(View):
+    """/space/member/name"""
+    @staticmethod
+    @Analyse.r(a=[SpaceP.space_getter], b=[SpaceManP.name])
+    @Auth.require_space_member
+    def put(r):
+        r.spaceman.update(r.d.name)
+        return 0

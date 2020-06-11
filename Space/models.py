@@ -311,6 +311,10 @@ class SpaceMan(models.Model):
             color='0xdddddd'
         )
 
+    def update(self, name):
+        self.name = name
+        self.save()
+
     def _readable_user(self):
         return self.user.d()
 
@@ -337,3 +341,7 @@ class SpaceP:
         'space_id', yield_name='space', stay_origin=True).process(Space.get)
 
     spaceman_getter = P('space_user', yield_name='spaceman').process(SpaceMan.get_by_union)
+
+
+class SpaceManP:
+    name, = SpaceMan.P('name')
