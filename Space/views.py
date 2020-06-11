@@ -91,8 +91,11 @@ class TicketView(View):
     @Auth.require_login
     def put(r):
         """进入星球"""
+        print('in space')
         space = r.d.spaceman.space
+        print('checker')
         space.not_member_checker(r.user)
+        print('add member')
         space.add_member(r.user)
         return 0
 
