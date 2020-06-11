@@ -245,8 +245,18 @@ class Space(models.Model):
         from Milestone.models import Milestone
         return self.milestone_set.dict(Milestone.d)
 
+    def _readable_default_milestone(self):
+        return self.default_milestone.pk
+
     def d(self):
-        return self.dictify('name', ('members', False), 'root_album', 'milestones', ('cover', True))
+        return self.dictify(
+            'name',
+            ('members', False),
+            'root_album',
+            'milestones',
+            ('cover', True),
+            'default_milestone'
+        )
 
     def d_create(self):
         return dict(
