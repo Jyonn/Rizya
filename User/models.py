@@ -84,6 +84,3 @@ class UserP:
 
     user_getter = user_id.clone().rename(
         'user_id', yield_name='user', stay_origin=True).process(User.get)
-
-    users_getter = P('users', '用户列表').process(list).process(
-        lambda users: list(map(User.get, users)))

@@ -79,7 +79,7 @@ class MemberAvatarView(View):
 class MemberIDView(View):
     """/space/:space_id/member/:user_id"""
     @staticmethod
-    @Analyse.r(a=[SpaceP.space_getter, UserP.users_getter])
+    @Analyse.r(a=[SpaceP.space_getter, UserP.user_getter])
     @Auth.require_space_owner
     def delete(r):
         space = r.d.space
