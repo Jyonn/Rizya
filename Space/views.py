@@ -70,6 +70,7 @@ class MemberView(View):
 
 class TicketView(View):
     """/space/:space_id/ticket"""
+    PTicket = P('ticket', yield_name='spaceman').process(Auth.analyse_invite_ticket)
 
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter])
@@ -79,12 +80,21 @@ class TicketView(View):
         return Auth.get_invite_ticket(r.spaceman)
 
     @staticmethod
-    @Analyse.r(a=[SpaceP.space_getter], b=[
-        P('ticket', yield_name='spaceman').process(Auth.analyse_invite_ticket)])
+    @Analyse.r(b=[PTicket])
     @Auth.require_login
     def post(r):
         """获取邀请信息"""
         return r.d.spaceman.d_invite()
+
+    @staticmethod
+    @Analyse.r(b=[PTicket])
+    @Auth.require_login
+    def put(r):
+        """进入星球"""
+        space = r.d.spaceman.space
+        space.not_member_checker(r.user)
+        space.add_member(r.user)
+        return
 
 
 class MemberAvatarView(View):

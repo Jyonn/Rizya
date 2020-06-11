@@ -17,6 +17,7 @@ class SpaceError:
     INVALID_ID = E("星球ID只能包含字母数字和中下划线")
     ID_EXIST = E("星球ID已存在")
     CREATE = E("创建星球{0}失败")
+    JOIN = E("加入星球{0}失败")
     REMOVE_MAN = E("移除居民失败")
     NOT_FOUND = E("空间不存在")
     REQUIRE_RENAME_CARD = E("空间改名卡不足")
@@ -24,6 +25,7 @@ class SpaceError:
     NOT_MEMBER = E("不是星球居民，无法操作")
     MEMBER_NOT_FOUND = E("居民不存在")
     DELETE_OWNER = E("无法驱逐球主")
+    ALREADY_MEMBER = E("您已加入此星球")
 
 
 class AccessChoices(models.CEnum):
@@ -119,6 +121,13 @@ class Space(models.Model):
         except Exception:
             raise SpaceError.NOT_MEMBER
 
+    def not_member_checker(self, user):
+        try:
+            self.spaceman_set.get(user=user)
+        except Exception:
+            pass
+        raise SpaceError.ALREADY_MEMBER
+
     # classmethods
 
     @classmethod
@@ -164,6 +173,17 @@ class Space(models.Model):
         except Exception as err:
             raise SpaceError.CREATE(name, debug_message=err)
         return space
+
+    def add_member(self, user):
+        try:
+            self.spaceman_set.create(
+                user=user,
+                avatar=None,
+                name=user.nickname,
+                is_owner=True,
+            )
+        except Exception as err:
+            raise SpaceError.JOIN(self.name, debug_message=err)
 
     def delete(self, *args, **kwargs):
         super(Space, self).delete(*args, **kwargs)
