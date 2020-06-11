@@ -45,14 +45,21 @@ class Auth:
         return d
 
     @staticmethod
-    def get_invite_token(spaceman: SpaceMan):
-        token, d = JWT.encrypt(dict(
+    def get_invite_ticket(spaceman: SpaceMan):
+        ticket, d = JWT.encrypt(dict(
             type=AuthType.INVITE,
             spaceman=spaceman.get_union(),
-        ))
-        d['token'] = token
-        d['spaceman'] = spaceman.d_user()
-        return d
+        ), expire_second=30*60)
+        return ticket
+
+    @staticmethod
+    def analyse_invite_ticket(ticket):
+        d = JWT.decrypt(ticket)
+        type_ = d.get('type')
+        if type_ != AuthType.INVITE:
+            raise AuthError.TOKEN_MISS_PARAM('type')
+        spaceman = d.get('spaceman')
+        return SpaceMan.get_by_union(spaceman)
 
     @classmethod
     def _extract_user(cls, r):

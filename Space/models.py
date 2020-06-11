@@ -318,7 +318,9 @@ class SpaceMan(models.Model):
     def _readable_user(self):
         return self.user.d()
 
-    def _readable_space(self):
+    def _readable_space(self, for_invite=False):
+        if for_invite:
+            return self.space.d_base()
         return self.space.d()
 
     def _readable_avatar(self):
@@ -329,6 +331,9 @@ class SpaceMan(models.Model):
 
     def d_user(self):
         return self.dictify('avatar', 'name', 'is_owner', 'space')
+
+    def d_invite(self):
+        return self.dictify('avatar', 'name', ('space', True))
 
     def d_user_base(self):
         return self.space.d_base()

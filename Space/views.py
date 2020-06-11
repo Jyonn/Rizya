@@ -1,5 +1,6 @@
 from SmartDjango import Analyse
 from django.views import View
+from smartify import P
 
 from Base.auth import Auth
 from Milestone.models import MilestoneP
@@ -67,6 +68,25 @@ class MemberView(View):
         return 0
 
 
+class TicketView(View):
+    """/space/:space_id/ticket"""
+
+    @staticmethod
+    @Analyse.r(a=[SpaceP.space_getter])
+    @Auth.require_space_member
+    def get(r):
+        """生成邀请"""
+        return Auth.get_invite_ticket(r.spaceman)
+
+    @staticmethod
+    @Analyse.r(a=[SpaceP.space_getter], b=[
+        P('ticket', yield_name='spaceman').process(Auth.analyse_invite_ticket)])
+    @Auth.require_login
+    def post(r):
+        """获取邀请信息"""
+        return r.d.spaceman.d_invite()
+
+
 class MemberAvatarView(View):
     """/space/:space_id/member/avatar"""
     @staticmethod
@@ -86,3 +106,4 @@ class MemberIDView(View):
         space_man = space.get_member(r.d.user)  # type: SpaceMan
         space_man.not_owner_checker()
         space_man.delete()
+        return 0

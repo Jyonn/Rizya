@@ -12,7 +12,7 @@ from SmartDjango import E
 
 @E.register()
 class JWTError:
-    JWT_EXPIRED = E("认证过期", hc=401)
+    JWT_EXPIRED = E("凭证过期", hc=401)
     ERROR_JWT_FORMAT = E("错误的认证格式", hc=400)
     JWT_PARAM_INCOMPLETE = E("认证参数不完整", hc=400)
 
