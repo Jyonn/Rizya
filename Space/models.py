@@ -206,9 +206,12 @@ class Space(models.Model):
     def _readable_root_album(self):
         return self.get_album().res_id
 
-    def _readable_cover(self):
+    def _readable_cover(self, for_invite=False):
         if self.default_milestone.cover:
-            return self.default_milestone.cover.d_space()
+            if for_invite:
+                return self.default_milestone.cover.d_space()
+            else:
+                return self.default_milestone.cover.d_invite()
 
     def _readable_members(self, only_avatar=True):
         if only_avatar:
@@ -223,7 +226,7 @@ class Space(models.Model):
         return self.milestone_set.dict(Milestone.d)
 
     def d(self):
-        return self.dictify('name', ('members', False), 'root_album', 'milestones', 'cover')
+        return self.dictify('name', ('members', False), 'root_album', 'milestones', ('cover', True))
 
     def d_create(self):
         return dict(

@@ -219,6 +219,9 @@ class Image(Resource):
     def d_space(self):
         return self.get_tiny_source_with_color((600, None))
 
+    def d_invite(self):
+        return self.get_tiny_source_with_color((600, 480))
+
     def d_milestone(self):
         return self.get_tiny_source_with_color((400, None))
 
