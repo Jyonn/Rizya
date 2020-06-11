@@ -208,7 +208,7 @@ class Space(models.Model):
 
     def _readable_cover(self, for_invite=False):
         if self.default_milestone.cover:
-            if for_invite:
+            if not for_invite:
                 return self.default_milestone.cover.d_space()
             else:
                 return self.default_milestone.cover.d_invite()
