@@ -51,13 +51,20 @@ class IDView(View):
 
 
 class MemberView(View):
-    """/space/members"""
+    """/space/:space_id/member"""
 
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter])
     def get(r):
         """获取空间用户信息"""
         return r.d.space.spaceman_set.dict(SpaceMan.d_space)
+
+    @staticmethod
+    @Analyse.r(a=[SpaceP.space_getter], b=[SpaceManP.name])
+    @Auth.require_space_member
+    def put(r):
+        r.spaceman.update(r.d.name)
+        return 0
 
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter], b=[UserP.users_getter])
@@ -70,19 +77,9 @@ class MemberView(View):
 
 
 class MemberAvatarView(View):
-    """/space/member/avatar"""
+    """/space/:space_id/member/avatar"""
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter])
     @Auth.require_space_member
     def get(r):
         return r.spaceman.get_avatar_token()
-
-
-class MemberNameView(View):
-    """/space/member/name"""
-    @staticmethod
-    @Analyse.r(a=[SpaceP.space_getter], b=[SpaceManP.name])
-    @Auth.require_space_member
-    def put(r):
-        r.spaceman.update(r.d.name)
-        return 0
