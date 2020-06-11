@@ -180,7 +180,7 @@ class Space(models.Model):
                 user=user,
                 avatar=None,
                 name=user.nickname,
-                is_owner=True,
+                is_owner=False,
             )
         except Exception as err:
             raise SpaceError.JOIN(self.name, debug_message=err)
