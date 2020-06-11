@@ -37,3 +37,11 @@ class IDView(View):
     def delete(r):
         r.d.milestone.delete()
         return 0
+
+
+class CoverView(View):
+    @staticmethod
+    @Analyse.r(a=[MilestoneP.id_getter])
+    @Auth.require_milestone_member
+    def get(r):
+        return r.d.milestone.get_image_token()
