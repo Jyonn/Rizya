@@ -8,7 +8,7 @@ from User.models import UserP, User
 
 
 class SpaceView(View):
-    """/space"""
+    """/space/"""
 
     @staticmethod
     @Auth.require_login

@@ -322,7 +322,7 @@ class SpaceMan(models.Model):
         return self.get_avatar()
 
     def d_space(self):
-        return self.dictify('avatar', 'name', 'is_owner')
+        return self.dictify('avatar', 'name', 'is_owner', 'user')
 
     def d_user(self):
         return self.dictify('avatar', 'name', 'is_owner', 'space')
