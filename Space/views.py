@@ -45,9 +45,13 @@ class IDView(View):
 
     @staticmethod
     @Analyse.r(a=[SpaceP.space_getter])
-    @Auth.require_space_owner
+    @Auth.require_space_member
     def delete(r):
-        r.d.space.delete()
+        """星主删除星球，居民离开星球"""
+        if r.spaceman.is_owner:
+            r.d.space.delete()
+        else:
+            r.spaceman.delete()
         return 0
 
 

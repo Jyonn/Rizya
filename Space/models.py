@@ -128,8 +128,6 @@ class Space(models.Model):
             return
         raise SpaceError.ALREADY_MEMBER
 
-    # classmethods
-
     @classmethod
     def get(cls, space_id: str):
         try:
