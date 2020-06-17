@@ -70,8 +70,14 @@ class Album(Resource):
 
     def d(self):
         return self.dictify(
-            'name', 'grid_rows', 'auto_arrange', 'cover', 'res_id->album_id',
-            'create_time', 'grid_position')
+            'name',
+            'grid_rows',
+            # 'auto_arrange',
+            'cover',
+            'res_id->album_id',
+            # 'create_time',
+            # 'grid_position'
+        )
 
     def d_layer(self):
         d_ = self.d()

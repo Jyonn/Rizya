@@ -206,15 +206,22 @@ class Image(Resource):
         super(Image, self).delete(*args, **kwargs)
 
     def _readable_source(self):
-        return self.get_sources()
+        return self.get_tiny_source_with_color()
 
     def _readable_orientation(self):
         return [self.orientation, self.orientation_int2str(self.orientation)]
 
     def d(self):
         return self.dictify(
-            'source', 'width', 'height', 'color_average', 'create_time',
-            'res_id->image_id', 'grid_position', 'orientation')
+            'source',
+            'width',
+            'height',
+            # 'color_average',
+            # 'create_time',
+            'res_id->image_id',
+            # 'grid_position',
+            # 'orientation'
+        )
 
     def d_space(self):
         return self.get_tiny_source_with_color((600, None))
