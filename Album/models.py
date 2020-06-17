@@ -50,7 +50,7 @@ class Album(Resource):
                 space=self.space,
                 parent=self,
                 name=name,
-                grid_rows=4,
+                grid_rows=6,
                 auto_arrange=True,
                 cover=None,
                 res_id=self.generate_res_id(),

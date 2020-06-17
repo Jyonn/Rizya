@@ -221,9 +221,6 @@ class Space(models.Model):
     def _readable_owner(self):
         return self.spaceman_set.get(is_owner=True).user.d()
 
-    def _readable_root_album(self):
-        return self.get_album().res_id
-
     def _readable_cover(self, for_invite=False):
         if self.default_milestone.cover:
             if not for_invite:
@@ -246,11 +243,14 @@ class Space(models.Model):
     def _readable_default_milestone(self):
         return self.default_milestone.pk
 
+    def _readable_album(self):
+        return self.get_album().d_layer()
+
     def d(self):
         return self.dictify(
             'name',
             ('members', False),
-            'root_album',
+            'album',
             'milestones',
             ('cover', True),
             'default_milestone'
