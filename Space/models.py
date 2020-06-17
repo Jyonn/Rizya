@@ -244,7 +244,7 @@ class Space(models.Model):
         return self.default_milestone.pk
 
     def _readable_album(self):
-        return self.get_album().res_id
+        return self.get_album().d_layer()
 
     def d(self):
         return self.dictify(
