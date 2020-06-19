@@ -195,18 +195,21 @@ class Image(Resource):
             rotate=self.get_source(auto_rotate=True, resize=None)
         )
 
-    def get_tiny_source_with_color(self, resize=None):
-        return dict(
+    def get_tiny_source_with_color(self, resize=None, with_origin=False):
+        d = dict(
             source=self.get_source(auto_rotate=True, resize=resize),
             color=self.color_average,
         )
+        if with_origin:
+            d["origin"] = self.get_source(auto_rotate=False, resize=None),
+        return d
 
     def delete(self, *args, **kwargs):
         qn_res_manager.delete_res(self.key)
         super(Image, self).delete(*args, **kwargs)
 
     def _readable_source(self):
-        return self.get_tiny_source_with_color()
+        return self.get_tiny_source_with_color(with_origin=True)
 
     def _readable_orientation(self):
         return [self.orientation, self.orientation_int2str(self.orientation)]
@@ -217,11 +220,7 @@ class Image(Resource):
             'source',
             'width',
             'height',
-            # 'color_average',
-            # 'create_time',
             'res_id',
-            # 'grid_position',
-            # 'orientation'
         ))
         return d
 
