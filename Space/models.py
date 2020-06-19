@@ -148,7 +148,7 @@ class Space(models.Model):
                 )
                 space.album_set.create(
                     parent=None,
-                    name=None,
+                    name='星球主相册',
                     grid_rows=4,
                     grid_position=None,
                     auto_arrange=True,
