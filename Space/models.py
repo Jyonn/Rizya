@@ -74,13 +74,6 @@ class Space(models.Model):
         related_name='default_milestone'
     )
 
-    # cover = models.ForeignKey(
-    #     'Image.Image',
-    #     default=None,
-    #     null=True,
-    #     on_delete=models.SET_NULL,
-    # )
-
     @staticmethod
     def _valid_space_id(space_id):
         if space_id[0] not in string.ascii_lowercase + string.ascii_uppercase + string.digits:
@@ -244,7 +237,7 @@ class Space(models.Model):
         return self.default_milestone.pk
 
     def _readable_album(self):
-        return self.get_album().d_layer()
+        return self.get_album().res_id
 
     def d(self):
         return self.dictify(

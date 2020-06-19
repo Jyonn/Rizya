@@ -119,3 +119,11 @@ class Auth:
             return func(r, *args, **kwargs)
 
         return wrapper
+
+    @classmethod
+    def require_album_member(cls, func):
+        @wraps(func)
+        def wrapper(r, *args, **kwargs):
+            cls._extract_user(r)
+            r.spaceman = r.d.album.space.get_member(r.user)
+            return func(r, *args, **kwargs)
