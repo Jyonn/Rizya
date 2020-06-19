@@ -127,3 +127,4 @@ class Auth:
             cls._extract_user(r)
             r.spaceman = r.d.album.space.get_member(r.user)
             return func(r, *args, **kwargs)
+        return wrapper
