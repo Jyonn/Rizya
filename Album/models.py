@@ -92,6 +92,11 @@ class Album(Resource):
     def d_image(self):
         return self.cover.d()
 
+    def update(self, name, grid_rows):
+        self.name = name
+        self.grid_rows = grid_rows
+        self.save()
+
 
 class AlbumP:
     name, album_id, grid_position = Album.get_params('name', 'res_id', 'grid_position')

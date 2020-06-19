@@ -17,12 +17,19 @@ class IDView(View):
         return r.d.album.d_layer()
 
     @staticmethod
-    @Analyse.r(a=[AlbumP.id_getter], b=[AlbumP.name])
+    @Analyse.r(a=[AlbumP.id_getter], b=[AlbumP.name, AlbumP.grid_rows])
     @Auth.require_album_member
     def post(r):
         """新增子相册"""
         return r.d.album.born(r.d.name).d()
 
+    @staticmethod
+    @Analyse.r(a=[AlbumP.id_getter], b=[AlbumP.name, AlbumP.grid_rows])
+    @Auth.require_album_member
+    def put(r):
+        """修改相册"""
+        r.d.album.update(**r.d.dict('name', 'grid_rows'))
+        return r.d.album.d_layer()
 
 class CoverView(View):
     @staticmethod
