@@ -69,23 +69,28 @@ class Album(Resource):
         self.save()
 
     def d(self):
-        return self.dictify(
+        d = dict(type='album')
+        d.update(self.dictify(
             'name',
             'grid_rows',
             # 'auto_arrange',
-            'cover',
-            'res_id->album_id',
+            # 'cover',
+            'res_id',
             # 'create_time',
             # 'grid_position'
-        )
+        ))
+        return d
 
     def d_layer(self):
-        d_ = self.d()
-        d_.update(dict(
+        d = self.d()
+        d.update(dict(
             albums=self.album_set.dict(Album.d),
             images=self.image_set.dict(Image.d),
         ))
-        return d_
+        return d
+
+    def d_image(self):
+        return self.cover.d()
 
 
 class AlbumP:

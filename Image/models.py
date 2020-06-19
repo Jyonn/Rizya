@@ -212,16 +212,18 @@ class Image(Resource):
         return [self.orientation, self.orientation_int2str(self.orientation)]
 
     def d(self):
-        return self.dictify(
+        d = dict(type='image')
+        d.update(self.dictify(
             'source',
             'width',
             'height',
             # 'color_average',
             # 'create_time',
-            'res_id->image_id',
+            'res_id',
             # 'grid_position',
             # 'orientation'
-        )
+        ))
+        return d
 
     def d_space(self):
         return self.get_tiny_source_with_color((600, None))
