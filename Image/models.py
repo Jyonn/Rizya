@@ -201,7 +201,7 @@ class Image(Resource):
             color=self.color_average,
         )
         if with_origin:
-            d["origin"] = self.get_source(auto_rotate=False, resize=None),
+            d["origin"] = self.get_source(auto_rotate=False, resize=None)
         return d
 
     def delete(self, *args, **kwargs):
