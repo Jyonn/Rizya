@@ -13,7 +13,6 @@ class ResourceError:
     NOT_FOUND = E("资源不存在")
     GRID_POSITION = E("网格坐标格式错误")
     NOT_ALBUM_IMAGE = E("只能删除相册图片")
-    AS_COVER = E("相册封面无法删除")
 
 
 class Resource(models.Model):
@@ -85,6 +84,7 @@ class Resource(models.Model):
 class ImageError:
     NOT_FOUND = E("图片不存在")
     CREATE = E("图片上传失败")
+    AS_COVER = E("相册封面无法删除")
 
 
 class ImageUploadAction:
