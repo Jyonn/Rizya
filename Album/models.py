@@ -87,11 +87,13 @@ class Album(Resource):
     def d_layer(self):
         d = self.d()
         d['images'] = self.album_set.filter(
-            cover__isnull=False).dict(Album.d) + self.image_set.dict(Image.d)
+            cover__isnull=False).dict(Album.d_image) + self.image_set.dict(Image.d)
         return d
 
     def d_image(self):
-        return self.cover.d()
+        d = self.cover.d()
+        d.update(self.d())
+        return d
 
     def update(self, name, grid_rows):
         self.name = name
