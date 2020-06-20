@@ -29,6 +29,7 @@ class IDView(View):
     def put(r):
         """修改相册"""
         r.d.album.update(**r.d.dict('name', 'grid_rows'))
+        return 0
 
 
 class CoverView(View):
