@@ -1,7 +1,9 @@
+from typing import Optional
+
 from SmartDjango import Analyse
 from django.views import View
 
-from Album.models import AlbumP
+from Album.models import AlbumP, Album
 from Base.qiniu.qn import qn_res_manager
 from Image.models import ImageUploadAction, Image
 from Milestone.models import MilestoneP
@@ -34,8 +36,8 @@ class QiniuImageView(View):
         width, height = image_info['width'], image_info['height']
 
         album = None
-        if action == ImageUploadAction.ALBUM:
-            album = r.d.album
+        if action in [ImageUploadAction.ALBUM, ImageUploadAction.ALBUM_COVER]:
+            album = r.d.album  # type: Optional[Album]
 
         image = Image.create(
             **r.d.dict('key', 'mime_type'),
@@ -51,11 +53,9 @@ class QiniuImageView(View):
             spaceman.set_avatar(image)
             return image.d_base()
 
-        # elif action == ImageUploadAction.SPACE:
-        #     space = r.d.space
-        #     space.set_cover(image)
-        #     return image.d_base()
-        #
+        elif action == ImageUploadAction.ALBUM_COVER:
+            album.set_cover(image)
+
         elif action == ImageUploadAction.MILESTONE:
             milestone = r.d.milestone
             milestone.set_cover(image)

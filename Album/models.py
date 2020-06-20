@@ -1,11 +1,12 @@
 from SmartDjango import models, E
 
-from Image.models import Resource, Image
+from Image.models import Resource, Image, ImageUploadAction
 
 
 @E.register(id_processor=E.idp_cls_prefix())
 class AlbumError:
     CREATE = E("创建相册失败")
+    ROOT = E("主相册无法删除")
 
 
 class Album(Resource):
@@ -44,6 +45,10 @@ class Album(Resource):
         related_name='cover',
     )
 
+    def not_root_checker(self):
+        if not self.parent:
+            raise AlbumError.ROOT
+
     def born(self, name) -> 'Album':
         try:
             return Album.objects.create(
@@ -68,25 +73,21 @@ class Album(Resource):
         self.cover = image
         self.save()
 
+    def get_image_token(self):
+        return Image.get_token(
+            action=ImageUploadAction.ALBUM_COVER,
+            album_id=self.res_id,
+        )
+
     def d(self):
         d = dict(type='album')
-        d.update(self.dictify(
-            'name',
-            'grid_rows',
-            # 'auto_arrange',
-            # 'cover',
-            'res_id',
-            # 'create_time',
-            # 'grid_position'
-        ))
+        d.update(self.dictify('name', 'grid_rows', 'res_id'))
         return d
 
     def d_layer(self):
         d = self.d()
-        d.update(dict(
-            albums=self.album_set.dict(Album.d),
-            images=self.image_set.dict(Image.d),
-        ))
+        d['images'] = self.album_set.filter(
+            cover__isnull=False).dict(Album.d) + self.image_set.dict(Image.d)
         return d
 
     def d_image(self):

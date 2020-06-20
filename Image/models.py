@@ -92,6 +92,7 @@ class ImageUploadAction:
     ALBUM = 'album'
     SPACEMAN = 'spaceman'
     SPACE = 'space'
+    ALBUM_COVER = 'album-cover'
 
 
 class Image(Resource):

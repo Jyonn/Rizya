@@ -21,7 +21,8 @@ class IDView(View):
     @Auth.require_album_member
     def post(r):
         """新增子相册"""
-        return r.d.album.born(r.d.name).d()
+        album = r.d.album.born(r.d.name)
+        return album.get_image_token()
 
     @staticmethod
     @Analyse.r(a=[AlbumP.id_getter], b=[AlbumP.name, AlbumP.grid_rows])
@@ -29,6 +30,16 @@ class IDView(View):
     def put(r):
         """修改相册"""
         r.d.album.update(**r.d.dict('name', 'grid_rows'))
+        return 0
+
+    @staticmethod
+    @Analyse.r(a=[AlbumP.id_getter])
+    @Auth.require_album_member
+    def delete(r):
+        """删除相册"""
+        album = r.d.album
+        album.not_root_checker()
+        album.delete()
         return 0
 
 
