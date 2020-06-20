@@ -35,6 +35,7 @@ class IDView(View):
 class CoverView(View):
     @staticmethod
     @Analyse.r(a=[AlbumP.id_getter], b=[ImageP.id_getter])
+    @Auth.require_album_member
     def put(r):
         album = r.d.album  # type: Album
         image = r.d.image  # type: Image
