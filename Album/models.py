@@ -79,9 +79,12 @@ class Album(Resource):
             album_id=self.res_id,
         )
 
+    def _readable_parent(self):
+        return self.parent.res_id
+
     def d(self):
         d = dict(type='album')
-        d.update(self.dictify('name', 'grid_rows', 'res_id'))
+        d.update(self.dictify('name', 'grid_rows', 'res_id', 'parent'))
         return d
 
     def d_layer(self):
