@@ -55,7 +55,7 @@ class QiniuImageView(View):
 
         elif action == ImageUploadAction.ALBUM_COVER:
             album.set_cover(image)
-            return album.d()
+            return album.d_image()
 
         elif action == ImageUploadAction.MILESTONE:
             milestone = r.d.milestone
