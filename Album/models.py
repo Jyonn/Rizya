@@ -80,7 +80,8 @@ class Album(Resource):
         )
 
     def _readable_parent(self):
-        return self.parent.res_id
+        if self.parent:
+            return self.parent.res_id
 
     def d(self):
         d = dict(type='album')
