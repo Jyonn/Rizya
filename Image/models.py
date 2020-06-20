@@ -12,6 +12,8 @@ from Base.qiniu.qn import qn_res_manager
 class ResourceError:
     NOT_FOUND = E("资源不存在")
     GRID_POSITION = E("网格坐标格式错误")
+    NOT_ALBUM_IMAGE = E("只能删除相册图片")
+    AS_COVER = E("相册封面无法删除")
 
 
 class Resource(models.Model):
@@ -120,6 +122,15 @@ class Image(Resource):
     orientation = models.IntegerField(
         default=1,
     )
+
+    def get_member(self, user):
+        if self.album:
+            return self.album.space.get_member(user)
+        raise ImageError.NOT_ALBUM_IMAGE
+
+    def not_cover_checker(self):
+        if self.album and self.album.cover == self:
+            raise ImageError.AS_COVER
 
     @classmethod
     def orientation_str2int(cls, orientation: list):

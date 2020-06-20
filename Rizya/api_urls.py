@@ -8,4 +8,5 @@ urlpatterns = [
     path('album/', include('Album.urls')),
     path('event/', include('Event.urls')),
     path('milestone/', include('Milestone.urls')),
+    path('image/', include('Image.urls')),
 ]
