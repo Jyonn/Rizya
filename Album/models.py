@@ -92,7 +92,7 @@ class Album(Resource):
 
     def d_image(self):
         d = self.cover.d()
-        d.update(self.d())
+        d.update(self.d())  # res_id 不能交换顺序
         return d
 
     def update(self, name, grid_rows):
