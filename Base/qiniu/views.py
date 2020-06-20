@@ -29,8 +29,11 @@ class QiniuImageView(View):
         image_info = r.d.image_info
 
         if 'orientation' in image_info:
-            orientation = image_info['orientation'].upper().split('-')
-            orientation = Image.orientation_str2int(orientation)
+            try:
+                orientation = image_info['orientation'].upper().split('-')
+                orientation = Image.orientation_str2int(orientation)
+            except Exception:
+                orientation = 1
         else:
             orientation = 1
         width, height = image_info['width'], image_info['height']
