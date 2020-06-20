@@ -90,7 +90,7 @@ class Album(Resource):
 
     def d_layer(self):
         d = self.d()
-        d['images'] = self.album_set.filter(
+        d['items'] = self.album_set.filter(
             cover__isnull=False).dict(Album.d_image) + self.image_set.dict(Image.d)
         return d
 
