@@ -29,9 +29,9 @@ class Album(Resource):
     )
 
     grid_rows = models.IntegerField(
-        min_value=4,
-        max_value=10,
-        default=4,
+        min_value=8,
+        max_value=20,
+        default=10,
     )
 
     auto_arrange = models.BooleanField(
@@ -55,7 +55,7 @@ class Album(Resource):
                 space=self.space,
                 parent=self,
                 name=name,
-                grid_rows=6,
+                grid_rows=10,
                 auto_arrange=True,
                 cover=None,
                 res_id=self.generate_res_id(),
