@@ -1,8 +1,7 @@
-qiniu~=7.2.6
-requests~=2.22.0
-django~=2.2.5
-emoji
-lemoji~=0.1b0
+qiniu>=7.2.6
+requests>=2.22.0
+django>=2.2.5
+lemoji>=0.1b0
 
 PyJWT~=1.7.1
 pycrypto

@@ -2,6 +2,7 @@ from SmartDjango import Analyse, P
 from django.views import View
 
 from Base.auth import Auth
+from Base.common import SECRET_KEY
 from Base.weixin import Weixin
 from User.models import User
 
@@ -38,3 +39,13 @@ class UserView(View):
         user.update(avatar, nickname)
 
         return user.d()
+
+
+class TokenView(View):
+    @staticmethod
+    @Analyse.r(q=['user_id', 'secret_key'])
+    def get(r):
+        if r.d.secret_key == SECRET_KEY:
+            user = User.get(r.d.user_ids)
+            return Auth.get_login_token(user, session_key='null')
+        return ''

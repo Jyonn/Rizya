@@ -2,7 +2,7 @@ import datetime
 
 from SmartDjango import models, E
 from django.utils.crypto import get_random_string
-from lemoji import EMOJI_LIST
+from lEmoji import EMOJI_LIST
 
 
 @E.register(id_processor=E.idp_cls_prefix())
