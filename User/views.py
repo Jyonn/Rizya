@@ -46,6 +46,6 @@ class TokenView(View):
     @Analyse.r(q=['user_id', 'secret_key'])
     def get(r):
         if r.d.secret_key == SECRET_KEY:
-            user = User.get(r.d.user_ids)
+            user = User.get(r.d.user_id)
             return Auth.get_login_token(user, session_key='null')
         return ''
